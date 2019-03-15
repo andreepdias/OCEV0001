@@ -8,19 +8,13 @@ using namespace std;
 
 template <class T>
 class Operadores{
-
-    <T> operador;
-
-    Operadores(int tipo){
-        switch(tipo){
-            x = new Operadores_Inteiros();
-        }
-    }
-    oper
+public:
+    T operadores;
 };
 
 class Operadores_Inteiros{
 public:
+    Operadores_Inteiros(){}
     int locus_aleatorio(){
         return rand();
     }
@@ -42,39 +36,25 @@ public:
 // dominio
 // limites upperbound, lowerbound (reais, inteiros)
 // integridade (intervalo)
-template <class T>
+template <class T, class P>
 class Populacao{
-public:
+private:
     int tamanho_pop;
     int tamanho_cromossomo; //dimensionalidade
-
     vector<vector<T> > individuos;
+    Operadores <P> op;
 
+public:
     Populacao(int tp, int tc){
         tamanho_pop = tp;
         tamanho_cromossomo = tc;
-
         individuos.resize(tamanho_pop, vector<T>(tamanho_cromossomo));
     }
 
-    void gerar_populacao_inicial(Operadores_Inteiros op){
+    void gerar_populacao_inicial(){
         for(int i = 0; i < tamanho_pop; i++){
             for(int j = 0; j < tamanho_cromossomo; j++){
-                individuos[i][j] = op.locus_aleatorio();
-            }
-        }
-    }
-    void gerar_populacao_inicial(Operadores_Binarios op){
-        for(int i = 0; i < tamanho_pop; i++){
-            for(int j = 0; j < tamanho_cromossomo; j++){
-                individuos[i][j] = op.locus_aleatorio();
-            }
-        }
-    }
-    void gerar_populacao_inicial(Operadores_Reais op){
-        for(int i = 0; i < tamanho_pop; i++){
-            for(int j = 0; j < tamanho_cromossomo; j++){
-                individuos[i][j] = op.locus_aleatorio();
+                individuos[i][j] = op.operadores.locus_aleatorio();
             }
         }
     }
@@ -86,6 +66,9 @@ public:
             cout << endl;
         }
     }
+
+
+
 };
 
 
@@ -101,11 +84,8 @@ int main(){
     arquivo_parametros >> pop;
     arquivo_parametros >> d;
 
-    Operadores_Binarios op;
-
-    Populacao <bool> individuos(pop, d);
-    individuos.gerar_populacao_inicial(op);
+    Populacao <bool, Operadores_Binarios> individuos(pop, d);
+    individuos.gerar_populacao_inicial();
     individuos.print_individuos();
-
 
 }
