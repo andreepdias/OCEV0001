@@ -20,6 +20,7 @@ int main(int argc, char const *argv[])
         printf("%s <arquivo_parametros> <tipo_selecao>\n\n<tipo_selecao>:\n1: Roleta sem reposicao\n2: Ranking Uniforme\n3: Torneio Estocastico\n4: Vizinhanca Linear\n", argv[0]);
         return 1;
     }
+    
     tipo_selecao = atoi(argv[2]);
     if(tipo_selecao == 3){
         if(argc != 5){
