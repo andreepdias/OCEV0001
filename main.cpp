@@ -101,10 +101,10 @@ public:
             if(individuo_selecionado != -1){
                 somatorio_atual -= (*fitness)[individuo_selecionado];
             }
+            somatorio_atual = somatorio_atual == 0 ? 1 : somatorio_atual;
 
             for(int i = 0; i < tamanho_populacao; i++){
                 if(i == individuo_selecionado) continue;
-                somatorio_atual = somatorio_atual == 0 ? 1 : somatorio_atual;
                 fitness_relativo[i] = (*fitness)[i] / somatorio_atual;
             }
 
@@ -121,7 +121,41 @@ public:
                 soma_acumulada += fitness_relativo[i];
             }
         }
+    }
 
+    void selecao_ranking() {
+        random_device device{};
+        mt19937 engine{device()};
+        uniform_real_distribution<double> distribution{0.0, 1.0};
+
+        vector<pair<double, int> > ranking_individuos(tamanho_populacao);
+        vector<double> fitness_relativo(tamanho_populacao);
+
+        for(int i = 0; i < tamanho_populacao; i++){
+            ranking_individuos[i] = make_pair((*fitness)[i], i);
+        }
+        sort(ranking_individuos.begin(), ranking_individuos.end());
+
+        double somatorio = double(tamanho_populacao * (tamanho_populacao + 1)) / 2;
+        for (int i = 0; i < tamanho_populacao; i++){
+            fitness_relativo[ranking_individuos[i].second] = double(i + 1) / somatorio;
+            // printf("Raking %i:\ti:%d\tfit:%lf\n", i + 1, ranking_individuos[i].second, ranking_individuos[i].first);
+        }
+
+        double soma_acumulada, r;
+        int k = 0;
+        for (int x = 0; x < tamanho_populacao; x++){
+            soma_acumulada = 0.0;
+            r = distribution(engine);
+
+            for (int i = 0; i < tamanho_populacao; i++){
+                if (fitness_relativo[i] + soma_acumulada >= r){
+                    individuos_selecionados[k++] = i;
+                    break;
+                }
+                soma_acumulada += fitness_relativo[i];
+            }
+        }
     }
 
     void print_populacao(){
@@ -196,7 +230,7 @@ int main(int argc, char const *argv[])
     populacao.gerar_populacao_inicial();
     populacao.print_populacao();
     populacao.Fitness(problema);
-    populacao.selecao_roleta();
+    populacao.selecao_ranking();
     populacao.print_selecionados();
 
 
