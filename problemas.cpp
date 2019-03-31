@@ -3,8 +3,7 @@
 using namespace std;
 
 
-vector<double> Dominio_Binario::funcaoCOS(){
-    vector<double> fitness;
+void Dominio_Binario::funcaoCOS(){
 
     double x, fx, max, min;
     int l = pow(2, 16) - 1, d;
@@ -18,14 +17,12 @@ vector<double> Dominio_Binario::funcaoCOS(){
         fx = cos(20 * x) - (abs(x) / 2) + (pow(x, 3) / 4);
         max = (fx + 4) / 6;
         min = 1 - (fx + 4) / 6;
-        fitness.push_back(max);
+        (*fitness)[i] = (max);
     }
 
-    return fitness;
 }
 
-vector<double> Dominio_Binario::radiosSTLX(){
-    vector<double> fitness;
+void Dominio_Binario::radiosSTLX(){
     int valor_st, valor_lx;
     double funcao_objetivo, penalizacao;
 
@@ -40,14 +37,12 @@ vector<double> Dominio_Binario::radiosSTLX(){
         valor_lx = roundf(16.0 / 31 * valor_lx);
         penalizacao = max(0.0, ((valor_st + 2 * valor_lx - 40) * 1.0) / 16);
         funcao_objetivo = ((30 * valor_st + 40 * valor_lx) * 1.0) / 1360;
-        fitness.push_back(funcao_objetivo - penalizacao);
+        (*fitness)[i] = (funcao_objetivo - penalizacao);
     }
     
-    return fitness;
 }
 
-vector<double> Dominio_Inteiro_Permutado::NQueens(){
-    vector<double> fitness;
+void Dominio_Inteiro_Permutado::NQueens(){
     int colisoes;
 
     for(int i = 0; i < tamanho_populacao; i++){ // percorre todas as soluções
@@ -72,22 +67,23 @@ vector<double> Dominio_Inteiro_Permutado::NQueens(){
                     q2 = -1;
                 }
 
-                if(yc++ < tamanho_cromossomo){
+                if(yc < tamanho_cromossomo){
                     if(yc == q1 or yc == q2){
                         colisoes++;
                         break;
                     }
                 }
-                if(yb-- >= 0){
-                    if(yb == q1 or yb == 2){
+                if(yb >= 0){
+                    if(yb == q1 or yb == q2){
                         colisoes++;
                         break;
                     }
                 }
+                yc++;
+                yb--;
             }
         }
-        fitness.push_back(1 - (colisoes * 1.0) / tamanho_cromossomo);
+        (*fitness)[i] = (1 - (colisoes * 1.0) / tamanho_cromossomo);
     }
     
-    return fitness;
 }
