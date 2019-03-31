@@ -43,14 +43,10 @@ int main(int argc, char const *argv[])
 
     void *parametros_selecao;
     switch(tipo_selecao){
-        case 1:
-            parametros_selecao = NULL; break;
-        case 2:
-            parametros_selecao = NULL; break;
-        case 3:
-            parametros_selecao = (void*)&parametros_torneio; break;
-        case 4:
-            parametros_selecao = (void*)&parametro_vizinhanca; break;
+        case 1: parametros_selecao = NULL; break;
+        case 2: parametros_selecao = NULL; break;
+        case 3: parametros_selecao = (void*)&parametros_torneio; break;
+        case 4: parametros_selecao = (void*)&parametro_vizinhanca; break;
     }
 
     ifstream arquivo_parametros;
