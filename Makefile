@@ -1,2 +1,2 @@
 all:
-	g++ problemas.cpp dominios.cpp main.cpp -o s
+	g++ populacao.cpp dominios.cpp selecoes.cpp problemas.cpp main.cpp -o s

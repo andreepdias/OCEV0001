@@ -54,8 +54,9 @@ void Dominio_Inteiro_Permutado::NQueens(){
             int yb = y - 1;
             for(int xx1 = x + 1, xx2 = x - 1; xx1 < tamanho_cromossomo or xx2 >= 0; xx1++, xx2--){ // compara todas as rainhas com uma das rainhas
                 int q1, q2;
-                
-                if(xx1 < tamanho_cromossomo){
+
+                if (xx1 < tamanho_cromossomo)
+                {
                     q1 = (*individuos)[i][xx1];
                 }else{
                     q1 = -1;

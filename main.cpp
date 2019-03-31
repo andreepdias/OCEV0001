@@ -1,305 +1,56 @@
 #include <bits/stdc++.h>
-#include "dominios.cpp"
+#include "populacao.cpp"
 using namespace std;
 
-
-class Populacao{
-private:
-    int tipo_variavel;
-    int tamanho_populacao;
-    int tamanho_cromossomo;
-
-    vector<pair<double, double> > *limites;
-
-    vector<vector<bool> > *individuos_binario = NULL;
-    vector<vector<int> > *individuos_inteiro = NULL;
-    vector<vector<int> > *individuos_inteiro_permutado = NULL;
-    vector<vector<double> > *individuos_real = NULL;
-
-    Dominio_Binario *db = NULL;
-    Dominio_Inteiro_Permutado *dp = NULL;
-    Dominio_Inteiro *di = NULL;
-    Dominio_Real *dr = NULL;
-
-    vector<double> *fitness;
-    vector<int> individuos_selecionados;
-
-public:
-    Populacao(int _tv, int _tp, int _tc, vector<pair<double, double> > *_l){
-        tipo_variavel = _tv;
-        tamanho_populacao = _tp;
-        tamanho_cromossomo = _tc;
-        limites = _l;
-        fitness = new vector<double>();
-        (*fitness).resize(tamanho_populacao);
-        individuos_selecionados.resize(tamanho_populacao);
-        switch (tipo_variavel){
-        case BINARIO:
-            individuos_binario = new vector<vector<bool> >();
-            db = new Dominio_Binario(tamanho_populacao, tamanho_cromossomo, limites, individuos_binario, fitness);
-            break;
-        case INTEIRO:
-            individuos_inteiro = new vector<vector<int> >();
-            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, fitness);
-            break;
-        case INTEIRO_PERMUTADO:
-            individuos_inteiro_permutado = new vector<vector<int> >();
-            dp = new Dominio_Inteiro_Permutado(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro_permutado, fitness);
-            break;
-        case REAL:
-            individuos_real = new vector<vector<double> >();
-            dr = new Dominio_Real(tamanho_populacao, tamanho_cromossomo, limites, individuos_real, fitness);
-            break;
-        }
-    }
-
-    void gerar_populacao_inicial(){
-        switch(tipo_variavel){
-            case BINARIO:
-                (*db).gerar_populacao_inicial();
-                break;
-            case INTEIRO:
-                (*di).gerar_populacao_inicial();
-                break;
-            case INTEIRO_PERMUTADO:
-                (*dp).gerar_populacao_inicial();
-                break;
-            case REAL:
-                (*dr).gerar_populacao_inicial();
-                break;
-        }
-    }
-
-    void Fitness(string problema){
-        if(problema == "NQueens"){
-            (*dp).NQueens();
-        }else if(problema == "FuncaoCOS"){
-            (*db).funcaoCOS();
-        }else if(problema == "RadiosSTLX"){
-            (*db).radiosSTLX();
-        }
-        print_fitness();
-    }
-
-    void selecao_roleta(){
-        random_device device{};
-        mt19937 engine{device()};
-        uniform_real_distribution<double> distribution{0.0, 1.0};
-
-        vector<double> fitness_relativo(tamanho_populacao);
-        double somatorio, somatorio_atual, soma_acumulada, r;
-
-        somatorio = 0.0;
-        for(int i = 0; i < tamanho_populacao; i++){
-            somatorio += (*fitness)[i];
-        }
-
-        int k = 0, individuo_selecionado = -1;
-        for(int x = 0; x < tamanho_populacao; x++){
-
-            somatorio_atual = somatorio;
-            if(individuo_selecionado != -1){
-                somatorio_atual -= (*fitness)[individuo_selecionado];
-            }
-            somatorio_atual = somatorio_atual == 0 ? 1 : somatorio_atual;
-
-            for(int i = 0; i < tamanho_populacao; i++){
-                if(i == individuo_selecionado) continue;
-                fitness_relativo[i] = (*fitness)[i] / somatorio_atual;
-            }
-
-            soma_acumulada = 0.0;
-            r = distribution(engine);
-
-            for(int i = 0; i < tamanho_populacao; i++){
-                if(i == individuo_selecionado) continue;
-                if (fitness_relativo[i] + soma_acumulada >=  r){
-                    individuos_selecionados[k++] = i;
-                    individuo_selecionado = i;
-                    break;
-                }
-                soma_acumulada += fitness_relativo[i];
-            }
-        }
-    }
-
-    void selecao_ranking() {
-        random_device device{};
-        mt19937 engine{device()};
-        uniform_real_distribution<double> distribution{0.0, 1.0};
-
-        vector<pair<double, int> > ranking_individuos(tamanho_populacao);
-        vector<double> fitness_relativo(tamanho_populacao);
-
-        for(int i = 0; i < tamanho_populacao; i++){
-            ranking_individuos[i] = make_pair((*fitness)[i], i);
-        }
-        sort(ranking_individuos.begin(), ranking_individuos.end());
-
-        double somatorio = double(tamanho_populacao * (tamanho_populacao + 1)) / 2;
-        for (int i = 0; i < tamanho_populacao; i++){
-            fitness_relativo[ranking_individuos[i].second] = double(i + 1) / somatorio;
-            // printf("Raking %i:\ti:%d\tfit:%lf\n", i + 1, ranking_individuos[i].second, ranking_individuos[i].first);
-        }
-
-        double soma_acumulada, r;
-        int k = 0;
-        for (int x = 0; x < tamanho_populacao; x++){
-            soma_acumulada = 0.0;
-            r = distribution(engine);
-
-            for (int i = 0; i < tamanho_populacao; i++){
-                if (fitness_relativo[i] + soma_acumulada >= r){
-                    individuos_selecionados[k++] = i;
-                    break;
-                }
-                soma_acumulada += fitness_relativo[i];
-            }
-        }
-    }
-
-    void selecao_torneio(){
-        random_device device{};
-        mt19937 engine{device()};
-        uniform_real_distribution<double> distribution_real{0.0, 1.0};
-        uniform_int_distribution<int> distribution_int(0, tamanho_populacao - 1);
-
-        int k = 2;
-        double kp = 1;
-
-        vector<pair<double, int> > individuos_torneio(k);
-        map<int, bool> individuos_escolhidos;
-
-        int r;
-        double rr;
-
-        for(int x = 0; x < tamanho_populacao; x++){
-            individuos_escolhidos.clear();
-            // printf("Torneio %d:\n", x + 1);
-            for(int i = 0; i < k; i++){
-                do{
-                    r = distribution_int(engine);
-                }while(individuos_escolhidos.find(r) != individuos_escolhidos.end());
-
-                individuos_escolhidos[r] = true;
-                individuos_torneio[i].first = (*fitness)[r];
-                individuos_torneio[i].second = r;
-            }
-            sort(individuos_torneio.begin(), individuos_torneio.end());
-
-            // printf("\nIndividuos Torneio:\n");
-            // for(int i = 0; i < k; i++){
-                // printf("i: %d\tfit: %lf\n", individuos_torneio[i].second, individuos_torneio[i].first);
-            // }
-
-            rr = distribution_real(engine);
-
-            if(kp >= rr){
-                individuos_selecionados[x] = individuos_torneio[k - 1].second;
-            }else{
-                individuos_selecionados[x] = individuos_torneio[0].second;
-            }
-            // printf("\nIndividuo Escolhido: %d\n\n___\n\n", individuos_selecionados[x]);
-        }
-    }
-
-    void selecao_vizinhanca(){
-        random_device device{};
-        mt19937 engine{device()};
-        uniform_int_distribution<int> distribution(0, tamanho_populacao - 1);
-
-        int d = 1;
-        if(d >= tamanho_populacao){
-            d = tamanho_populacao - 1;
-        }
-
-        pair<double, int> melhor_individuo;
-
-        vector<int> individuos_aleatorios (tamanho_populacao);
-        for(int i = 0; i < tamanho_populacao; i++){
-            individuos_aleatorios[i] = i;
-        }
-        shuffle(individuos_aleatorios.begin(), individuos_aleatorios.end() - (tamanho_populacao / 2), engine);
-
-        // printf("Vizinhanca Inicial:\n");
-        // for(int i = 0; i < tamanho_populacao / 2 ; i++){
-        //     cout << individuos_aleatorios[i] << " ";
-        // }
-        // printf("\n\n");
-
-        for(int x = 0; x < tamanho_populacao / 2; x++){
-            individuos_selecionados[x * 2] = individuos_aleatorios[x];
-
-            melhor_individuo = make_pair(0.0, -1);
-            for(int i = -d; i <= d; i++){
-                if(i == 0) continue;
-
-                int p = individuos_aleatorios[x] + i;
-                if(p < 0){
-                    p = p + tamanho_populacao;
-                }else{
-                    p = p % tamanho_populacao;
-                }
-                
-                if ((*fitness)[p] >= melhor_individuo.first){
-                    melhor_individuo.first = (*fitness)[p];
-                    melhor_individuo.second = p;
-                }
-            }
-            individuos_selecionados[x * 2 + 1] = melhor_individuo.second;
-        }
-    }
-
-    void print_populacao(){
-        for (int i = 0; i < tamanho_populacao; i++){
-            printf("%d.\t", i);
-            for (int j = 0; j < tamanho_cromossomo; j++){
-                switch(tipo_variavel){
-                    case BINARIO:
-                        cout << (*individuos_binario)[i][j];
-                        break;
-                    case INTEIRO:
-                        cout << (*individuos_inteiro)[i][j];
-                        break;
-                    case INTEIRO_PERMUTADO:
-                        cout << (*individuos_inteiro_permutado)[i][j];
-                        break;
-                    case REAL:
-                        cout << (*individuos_real)[i][j];
-                        break;
-                }
-                printf(" ");
-            }
-            printf("\n");
-        }
-        printf("\n");
-    }
-
-    void print_fitness(){
-        for(int i = 0; i < tamanho_populacao; i++){
-            printf("%d.\t%.4lf\n", i, (*fitness)[i]);
-        }
-        printf("\n");
-    }
-    void print_selecionados(){
-        for(int i = 0; i < tamanho_populacao; i++){
-            printf("%d.\t%d\n", i, individuos_selecionados[i]);
-        }
-        printf("\n");
-    }
-};
 
 int main(int argc, char const *argv[])
 {
     srand(time(NULL));
-    int tipo_variavel, tamanho_populacao, tamanho_cromossomo, numero_variaveis;
-    string problema;
+    int tipo_variavel, tamanho_populacao, tamanho_cromossomo, numero_variaveis, tipo_selecao;
     double limite_inferior, limite_superior;
+    string problema;
+    
     vector<pair<double, double> > limites;
 
-    if(argc != 2){
-        printf("%s <arquivo_parametros>\n", argv[0]);
+    int k, d, parametro_vizinhanca;
+    double kp;
+    pair<int, double> parametros_torneio;
+
+    if(argc != 3){
+        printf("%s <arquivo_parametros> <tipo_selecao>\n\n<tipo_selecao>:\n1: Roleta sem reposicao\n2: Ranking Uniforme\n3: Torneio Estocastico\n4: Vizinhanca Linear\n", argv[0]);
         return 1;
+    }
+    tipo_selecao = atoi(argv[2]);
+    if(tipo_selecao == 3){
+        if(argc != 5){
+            k = 2;
+            kp = 1.0;            
+        }else{
+            k = atoi(argv[3]);
+            kp = atof(argv[4]);
+        }
+        parametros_torneio = make_pair(k, kp);
+        printf("Selecao Torneio escolhida. Parametros: k = %d e kp = %lf.\n", k, kp);
+    }else if(tipo_selecao == 4){
+        if(argc != 4){
+            d = 2;            
+        }else{
+            d = atoi(argv[3]);
+        }
+        parametro_vizinhanca = d;
+        printf("Selecao Vizinhanca escolhida. Parametros: d = %d.\n", d);
+    }
+
+    void *parametros_selecao;
+    switch(tipo_selecao){
+        case 1:
+            parametros_selecao = NULL; break;
+        case 2:
+            parametros_selecao = NULL; break;
+        case 3:
+            parametros_selecao = (void*)&parametros_torneio; break;
+        case 4:
+            parametros_selecao = (void*)&parametro_vizinhanca; break;
     }
 
     ifstream arquivo_parametros;
@@ -320,10 +71,8 @@ int main(int argc, char const *argv[])
     Populacao populacao(tipo_variavel, tamanho_populacao, tamanho_cromossomo, &limites);
 
     populacao.gerar_populacao_inicial();
-    populacao.print_populacao();
     populacao.Fitness(problema);
-    populacao.selecao_vizinhanca();
-    populacao.print_selecionados();
+    populacao.selecao(tipo_selecao, parametros_selecao);
 
 
 }
