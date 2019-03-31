@@ -171,6 +171,7 @@ public:
         map<int, bool> individuos_escolhidos;
 
         int r;
+        double rr;
 
         for(int x = 0; x < tamanho_populacao; x++){
             individuos_escolhidos.clear();
@@ -187,21 +188,66 @@ public:
             sort(individuos_torneio.begin(), individuos_torneio.end());
 
             // printf("\nIndividuos Torneio:\n");
-            for(int i = 0; i < k; i++){
+            // for(int i = 0; i < k; i++){
                 // printf("i: %d\tfit: %lf\n", individuos_torneio[i].second, individuos_torneio[i].first);
-            }
+            // }
 
-            double rr = distribution_real(engine);
+            rr = distribution_real(engine);
 
             if(kp >= rr){
                 individuos_selecionados[x] = individuos_torneio[k - 1].second;
             }else{
                 individuos_selecionados[x] = individuos_torneio[0].second;
             }
-
             // printf("\nIndividuo Escolhido: %d\n\n___\n\n", individuos_selecionados[x]);
         }
+    }
 
+    void selecao_vizinhanca(){
+        random_device device{};
+        mt19937 engine{device()};
+        uniform_int_distribution<int> distribution(0, tamanho_populacao - 1);
+
+        int d = 1;
+        if(d >= tamanho_populacao){
+            d = tamanho_populacao - 1;
+        }
+
+        pair<double, int> melhor_individuo;
+
+        vector<int> individuos_aleatorios (tamanho_populacao);
+        for(int i = 0; i < tamanho_populacao; i++){
+            individuos_aleatorios[i] = i;
+        }
+        shuffle(individuos_aleatorios.begin(), individuos_aleatorios.end() - (tamanho_populacao / 2), engine);
+
+        // printf("Vizinhanca Inicial:\n");
+        // for(int i = 0; i < tamanho_populacao / 2 ; i++){
+        //     cout << individuos_aleatorios[i] << " ";
+        // }
+        // printf("\n\n");
+
+        for(int x = 0; x < tamanho_populacao / 2; x++){
+            individuos_selecionados[x * 2] = individuos_aleatorios[x];
+
+            melhor_individuo = make_pair(0.0, -1);
+            for(int i = -d; i <= d; i++){
+                if(i == 0) continue;
+
+                int p = individuos_aleatorios[x] + i;
+                if(p < 0){
+                    p = p + tamanho_populacao;
+                }else{
+                    p = p % tamanho_populacao;
+                }
+                
+                if ((*fitness)[p] >= melhor_individuo.first){
+                    melhor_individuo.first = (*fitness)[p];
+                    melhor_individuo.second = p;
+                }
+            }
+            individuos_selecionados[x * 2 + 1] = melhor_individuo.second;
+        }
     }
 
     void print_populacao(){
@@ -276,7 +322,7 @@ int main(int argc, char const *argv[])
     populacao.gerar_populacao_inicial();
     populacao.print_populacao();
     populacao.Fitness(problema);
-    populacao.selecao_torneio();
+    populacao.selecao_vizinhanca();
     populacao.print_selecionados();
 
 
