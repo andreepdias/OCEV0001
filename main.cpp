@@ -158,6 +158,52 @@ public:
         }
     }
 
+    void selecao_torneio(){
+        random_device device{};
+        mt19937 engine{device()};
+        uniform_real_distribution<double> distribution_real{0.0, 1.0};
+        uniform_int_distribution<int> distribution_int(0, tamanho_populacao - 1);
+
+        int k = 2;
+        double kp = 1;
+
+        vector<pair<double, int> > individuos_torneio(k);
+        map<int, bool> individuos_escolhidos;
+
+        int r;
+
+        for(int x = 0; x < tamanho_populacao; x++){
+            individuos_escolhidos.clear();
+            // printf("Torneio %d:\n", x + 1);
+            for(int i = 0; i < k; i++){
+                do{
+                    r = distribution_int(engine);
+                }while(individuos_escolhidos.find(r) != individuos_escolhidos.end());
+
+                individuos_escolhidos[r] = true;
+                individuos_torneio[i].first = (*fitness)[r];
+                individuos_torneio[i].second = r;
+            }
+            sort(individuos_torneio.begin(), individuos_torneio.end());
+
+            // printf("\nIndividuos Torneio:\n");
+            for(int i = 0; i < k; i++){
+                // printf("i: %d\tfit: %lf\n", individuos_torneio[i].second, individuos_torneio[i].first);
+            }
+
+            double rr = distribution_real(engine);
+
+            if(kp >= rr){
+                individuos_selecionados[x] = individuos_torneio[k - 1].second;
+            }else{
+                individuos_selecionados[x] = individuos_torneio[0].second;
+            }
+
+            // printf("\nIndividuo Escolhido: %d\n\n___\n\n", individuos_selecionados[x]);
+        }
+
+    }
+
     void print_populacao(){
         for (int i = 0; i < tamanho_populacao; i++){
             printf("%d.\t", i);
@@ -230,7 +276,7 @@ int main(int argc, char const *argv[])
     populacao.gerar_populacao_inicial();
     populacao.print_populacao();
     populacao.Fitness(problema);
-    populacao.selecao_ranking();
+    populacao.selecao_torneio();
     populacao.print_selecionados();
 
 
