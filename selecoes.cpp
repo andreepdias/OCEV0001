@@ -135,8 +135,15 @@ void Populacao::selecao_vizinhanca(void *parametros)
     mt19937 engine{device()};
     uniform_int_distribution<int> distribution(0, tamanho_populacao - 1);
 
-    int *parametro = (int *)parametros;
-    int d = (*parametro);
+    pair<int, int> *p = (pair<int, int>*)parametros;
+    int d = (*p).first;
+    int t = (*p).second;
+
+    int r, i;
+    int individuo_aleatorio;
+
+    uniform_int_distribution<int> distribution_d(-d, d);
+    uniform_real_distribution<double> distribution_real{0.0, 1.0};
 
     if (d >= tamanho_populacao){
         d = tamanho_populacao - 1;
@@ -144,38 +151,107 @@ void Populacao::selecao_vizinhanca(void *parametros)
 
     pair<double, int> melhor_individuo;
 
-    vector<int> individuos_aleatorios(tamanho_populacao);
-    for (int i = 0; i < tamanho_populacao; i++){
-        individuos_aleatorios[i] = i;
-    }
-    shuffle(individuos_aleatorios.begin(), individuos_aleatorios.end(), engine);
-
-    // printf("Vizinhanca Inicial:\n");
-    // for(int i = 0; i < tamanho_populacao / 2 ; i++){
-    //     cout << individuos_aleatorios[i] << " ";
-    // }
-    // printf("\n\n");
 
     for (int x = 0; x < tamanho_populacao / 2; x++){
-        individuos_selecionados[x * 2] = individuos_aleatorios[x];
+        individuo_aleatorio = distribution(engine);
+        individuos_selecionados[x * 2] = individuo_aleatorio;
 
-        melhor_individuo = make_pair(0.0, -1);
-        for (int i = -d; i <= d; i++){
-            if (i == 0) continue;
+        printf("Individuo escolhido:\t\t\t\t%d\n", individuo_aleatorio);
+        if(t == 1){ // ESCOLHE MELHOR INDIVÍDUO DA VIZINHANÇA
+            melhor_individuo.first = 0.0, melhor_individuo.second = -1;
+            for (int i = -d; i <= d; i++){
+                if (i == 0) continue;
 
-            int p = individuos_aleatorios[x] + i;
+                int p = individuo_aleatorio + i;
+                if (p < 0){
+                    p = p + tamanho_populacao;
+                }else{
+                    p = p % tamanho_populacao;
+                }
+
+                if ((*fitness)[p] >= melhor_individuo.first){
+                    melhor_individuo.first = (*fitness)[p];
+                    melhor_individuo.second = p;
+                }
+            }
+            individuos_selecionados[x * 2 + 1] = melhor_individuo.second;
+            printf("Inviduo escolhido melhor vizinhanca:\t\t%d\n\n", melhor_individuo.second);
+        }else if(t == 2){ // ESCOLHE INDIVÍDUO ALEATÓRIO DA VIZINHANÇA
+            do{
+                r = distribution_d(engine);
+                // printf("r: %d\n", r);
+            }while(r == 0);
+            int p = r + individuo_aleatorio;
             if (p < 0){
                 p = p + tamanho_populacao;
             }else{
                 p = p % tamanho_populacao;
             }
-
-            if ((*fitness)[p] >= melhor_individuo.first){
-                melhor_individuo.first = (*fitness)[p];
-                melhor_individuo.second = p;
+            individuos_selecionados[x * 2 + 1] = p;
+            printf("Inviduo escolhido aleatorio vizinhanca:\t\t%d\n\n", p);
+        }else if(t == 3){ // ESCOLHE INDIVÍDUO DA VIZINHANÇA
+            double somatorio = 0;
+            int individuo_escolhido;
+            for(i = -d; i <= d; i++){
+                if(i == 0) continue;
+                int p = individuo_aleatorio + i;
+                if (p < 0){
+                    p = p + tamanho_populacao;
+                }else{
+                    p = p % tamanho_populacao;
+                }
+                somatorio += (*fitness)[p];
             }
+            printf("Somatorio: %lf\n", somatorio);
+            if(somatorio == 0){
+                do{
+                    r = distribution_d(engine);
+                    // printf("r: %d\n", r);
+                }while (r == 0);
+                int p = r + individuo_aleatorio;
+                if (p < 0){
+                    p = p + tamanho_populacao;
+                }else{
+                    p = p % tamanho_populacao;
+                }
+                individuo_escolhido = p;
+            }else{
+                vector<pair<double, int> > fitness_relativo(d * 2 + 1);
+                for(i = -d; i <= d; i++){
+                    if(i == 0) continue;
+
+                    int p = individuo_aleatorio + i;
+                    if (p < 0){
+                        p = p + tamanho_populacao;
+                    }else{
+                        p = p % tamanho_populacao;
+                    }
+                    fitness_relativo[i + d].first = (*fitness)[p] / somatorio;
+                    fitness_relativo[i + d].second = p;
+                    printf("Individuo Aleatorio: %d\tIndividuo Vizinho: %d\ti:%d\td:%di+d:%d\n", individuo_aleatorio, p, i, d, i + d);
+                }
+                printf("Fitness Relativo:\n");
+                for(i = 0; i < d * 2 + 1; i++){
+                    printf("i:%d\tp:%d\tfit:%lf\n", i, fitness_relativo[i].second, fitness_relativo[i].first);
+                }
+                double r = distribution_real(engine);
+                double soma_acumulada = 0;
+                individuo_escolhido = -1;
+                for(i = -d; i <= d; i++){
+                    if(i == 0) continue;
+
+
+                    if(fitness_relativo[i + d].first + soma_acumulada >= r){
+                        individuo_escolhido = fitness_relativo[i + d].second;
+                        break;
+                    }
+                    soma_acumulada += fitness_relativo[i + d].first;
+                }
+
+            }
+            individuos_selecionados[x * 2 + 1] = individuo_escolhido;
+            printf("Inviduo escolhido proporcinal vizinhanca:\t%d\n\n", individuo_escolhido);
         }
-        individuos_selecionados[x * 2 + 1] = melhor_individuo.second;
     }
     if(tamanho_populacao % 2 != 0){
         individuos_selecionados[tamanho_populacao - 1] = distribution(engine);

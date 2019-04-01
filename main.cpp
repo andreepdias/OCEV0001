@@ -12,11 +12,12 @@ int main(int argc, char const *argv[])
     
     vector<pair<double, double> > limites;
 
-    int k, d, parametro_vizinhanca;
+    int k, d, tipo_vizinhanca;
     double kp;
     pair<int, double> parametros_torneio;
+    pair<int, int> parametros_vizinhanca;
 
-    if(argc != 3){
+    if(argc <= 3){
         printf("%s <arquivo_parametros> <tipo_selecao>\n\n<tipo_selecao>:\n1: Roleta sem reposicao\n2: Ranking Uniforme\n3: Torneio Estocastico\n4: Vizinhanca Linear\n", argv[0]);
         return 1;
     }
@@ -33,13 +34,15 @@ int main(int argc, char const *argv[])
         parametros_torneio = make_pair(k, kp);
         printf("Selecao Torneio escolhida. Parametros: k = %d e kp = %lf.\n", k, kp);
     }else if(tipo_selecao == 4){
-        if(argc != 4){
-            d = 2;            
+        if(argc != 5){
+            d = 2;
+            tipo_vizinhanca = 1;
         }else{
             d = atoi(argv[3]);
+            tipo_vizinhanca = atoi(argv[4]);
         }
-        parametro_vizinhanca = d;
-        printf("Selecao Vizinhanca escolhida. Parametros: d = %d.\n", d);
+        parametros_vizinhanca = make_pair(d, tipo_vizinhanca);
+        printf("Selecao Vizinhanca escolhida. Parametros: d = %d e tipo = %d.\n", d, tipo_vizinhanca);
     }
 
     void *parametros_selecao;
@@ -47,7 +50,7 @@ int main(int argc, char const *argv[])
         case 1: parametros_selecao = NULL; break;
         case 2: parametros_selecao = NULL; break;
         case 3: parametros_selecao = (void*)&parametros_torneio; break;
-        case 4: parametros_selecao = (void*)&parametro_vizinhanca; break;
+        case 4: parametros_selecao = (void*)&parametros_vizinhanca; break;
     }
 
     ifstream arquivo_parametros;
