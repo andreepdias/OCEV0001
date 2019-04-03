@@ -24,6 +24,9 @@ private:
     vector<double> *fitness;
     vector<int> individuos_selecionados;
 
+    random_device device{};
+    mt19937 engine{device()};
+
 public:
     Populacao(int _tv, int _tp, int _tc, vector<pair<double, double> > *_l){
         tipo_variavel = _tv;
@@ -129,6 +132,8 @@ public:
         }
         printf("\n");
     }
+    int girar_roleta(vector<pair<double, int> > &participantes, int ignorado);
+    void roleta(vector<int> &individuos);
     void selecao_roleta(void *parametros);
     void selecao_ranking(void *parametros);
     void selecao_torneio(void *parametros);

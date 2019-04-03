@@ -2,13 +2,50 @@
 #include "populacao.cpp"
 using namespace std;
 
-void Populacao::selecao_roleta(void *parametros)
-{
-    random_device device{};
-    mt19937 engine{device()};
+int Populacao::girar_roleta(vector<pair<double, int> > &participantes, int ignorado){
     uniform_real_distribution<double> distribution{0.0, 1.0};
+    
+    double soma_acumulada = 0.0;
+    double r = distribution(engine);
 
-    vector<double> fitness_relativo(tamanho_populacao);
+    for(int i = 0; i < participantes.size(); i++){
+        if(i == ignorado) continue;
+        if(soma_acumulada + participantes[i].first >= r){
+            return participantes[i].second;
+        }
+        soma_acumulada += participantes[i].first;
+    }
+}
+
+double Populacao::valor_fitness(int individuo){
+    return (*fitness)[individuo];
+}
+
+double Populacao::valor_ranking(int individuo){
+    return tamanho_populacao - individuo;
+}
+
+void Populacao::roleta(vector<int> &individuos, double (*somatorio)(int)){
+    vector<pair<double, int> > fitness_relativo(tamanho_populacao);
+    double somatorio = 0.0;
+
+    for(int i = 0; i < individuos.size(); i++){
+        somatorio += (*somatorio)(individuos[i]);
+    }
+
+}
+
+
+//se eu passar u mponteiro pra uma função calcular o somatorio
+
+void Populacao::selecao_roleta(void *parametros)
+
+{
+
+    roleta(individuos, &somatorio_roleta);
+    
+
+    vector<pair<double, int> > fitness_relativo(tamanho_populacao);
     double somatorio, somatorio_atual, soma_acumulada, r;
 
     somatorio = 0.0;
@@ -16,40 +53,29 @@ void Populacao::selecao_roleta(void *parametros)
         somatorio += (*fitness)[i];
     }
 
-    int k = 0, individuo_selecionado = -1;
+    int k = 0, individuo_escolhido = -1;
     for (int x = 0; x < tamanho_populacao; x++){
 
         somatorio_atual = somatorio;
-        if (individuo_selecionado != -1){
-            somatorio_atual -= (*fitness)[individuo_selecionado];
+        if (individuo_escolhido != -1){
+            somatorio_atual -= (*fitness)[individuo_escolhido];
         }
         somatorio_atual = somatorio_atual == 0 ? 1 : somatorio_atual;
 
         for (int i = 0; i < tamanho_populacao; i++){
-            if (i == individuo_selecionado) continue;
-            fitness_relativo[i] = (*fitness)[i] / somatorio_atual;
+            if (i == individuo_escolhido) continue;
+            fitness_relativo[i].first = i;
+            fitness_relativo[i].second = (*fitness)[i] / somatorio_atual;
         }
-
-        soma_acumulada = 0.0;
-        r = distribution(engine);
-
-        for (int i = 0; i < tamanho_populacao; i++){
-            if (i == individuo_selecionado) continue;
-            if (fitness_relativo[i] + soma_acumulada >= r){
-                individuos_selecionados[k++] = i;
-                individuo_selecionado = i;
-                break;
-            }
-            soma_acumulada += fitness_relativo[i];
-        }
+        individuo_escolhido = girar_roleta(fitness_relativo, individuo_escolhido);
+        individuos_selecionados[k++] = individuo_escolhido;
     }
 }
 
 void Populacao::selecao_ranking(void *parametros)
 {
-    random_device device{};
-    mt19937 engine{device()};
     uniform_real_distribution<double> distribution{0.0, 1.0};
+    
 
     vector<pair<double, int>> ranking_individuos(tamanho_populacao);
     vector<double> fitness_relativo(tamanho_populacao);
@@ -83,8 +109,6 @@ void Populacao::selecao_ranking(void *parametros)
 
 void Populacao::selecao_torneio(void *parametros)
 {
-    random_device device{};
-    mt19937 engine{device()};
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     uniform_int_distribution<int> distribution_int(0, tamanho_populacao - 1);
 
@@ -131,8 +155,6 @@ void Populacao::selecao_torneio(void *parametros)
 
 void Populacao::selecao_vizinhanca(void *parametros)
 {
-    random_device device{};
-    mt19937 engine{device()};
     uniform_int_distribution<int> distribution(0, tamanho_populacao - 1);
 
     pair<int, int> *p = (pair<int, int>*)parametros;
@@ -189,7 +211,7 @@ void Populacao::selecao_vizinhanca(void *parametros)
             }
             individuos_selecionados[x * 2 + 1] = p;
             printf("Inviduo escolhido aleatorio vizinhanca:\t\t%d\n\n", p);
-        }else if(t == 3){ // ESCOLHE INDIVÍDUO DA VIZINHANÇA
+        }else if(t == 3){ // ESCOLHE INDIVÍDUO DA VIZINHANÇA PROPORCINAL AO FITNESS
             double somatorio = 0;
             int individuo_escolhido;
             for(i = -d; i <= d; i++){
