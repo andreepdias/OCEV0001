@@ -128,14 +128,15 @@ public:
     void print_selecionados(){
         printf("Selecao:\n");
         for(int i = 0; i < tamanho_populacao; i++){
-            printf("%d.\t%d\n", i, individuos_selecionados[i]);
+            printf("%d.\t%d\t(%.10lf)\n", i, individuos_selecionados[i], (*fitness)[individuos_selecionados[i]]);
         }
         printf("\n");
     }
     int girar_roleta(vector<pair<double, int> > &participantes, int ignorado);
-    void roleta(vector<int> &individuos);
+    void roleta(vector<int> &individuos, function<double(int)> valor, int n_escolhidos, int &k);
     void selecao_roleta(void *parametros);
     void selecao_ranking(void *parametros);
     void selecao_torneio(void *parametros);
     void selecao_vizinhanca(void *parametros);
+
 };

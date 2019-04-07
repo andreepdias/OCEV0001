@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
     pair<int, double> parametros_torneio;
     pair<int, int> parametros_vizinhanca;
 
-    if(argc <= 3){
+    if(argc < 3){
         printf("%s <arquivo_parametros> <tipo_selecao>\n\n<tipo_selecao>:\n1: Roleta sem reposicao\n2: Ranking Uniforme\n3: Torneio Estocastico\n4: Vizinhanca Linear\n", argv[0]);
         return 1;
     }

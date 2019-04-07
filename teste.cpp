@@ -1,27 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 using namespace std;
-
-int sum(int a, int b){
-    return a + b;
-}
-
-int s(int a, int b, int (*f) (int, int)){
-
-    int x = 10, y = 20;
-
-    int z = (*f)(x, y);
-
-    return z;
-
-}
-
-
-int main(int argc, char const *argv[])
+void test2(void (*test)(string, int))
 {
-    
-    cout << s (1, 2, sum) << endl;
-
+    test("Raja", 2);
+}
+int main()
+{
+    auto test1 = [](string name, int a) { cout << "Hello " << name << a << endl; };
+    test1("atif", 1);
+    test2(test1);
     return 0;
 }
-
