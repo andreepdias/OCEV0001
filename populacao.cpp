@@ -117,6 +117,23 @@ public:
         }
         printf("\n");
     }
+    void print_gene(int g){
+        printf("%d.\t", g);
+        for (int j = 0; j < tamanho_cromossomo; j++){
+            switch(tipo_variavel){
+                case BINARIO:
+                    cout << (*individuos_binario)[g][j]; break;
+                case INTEIRO:
+                    cout << (*individuos_inteiro)[g][j]; break;
+                case INTEIRO_PERMUTADO:
+                    cout << (*individuos_inteiro_permutado)[g][j]; break;
+                case REAL:
+                    cout << (*individuos_real)[g][j]; break;
+            }
+            printf(" ");
+        }
+        printf("\n");
+    }
 
     void print_fitness(){
         printf("Fitness:\n");
@@ -138,5 +155,8 @@ public:
     void selecao_ranking(void *parametros);
     void selecao_torneio(void *parametros);
     void selecao_vizinhanca(void *parametros);
+    void crossover_n_cortes_bin(int qtd_pontos_corte);
+    void crossover_uniforme_bin();
+    void crossover_n_cortes_int(int qtd_pontos_corte);
 
-};
+    };
