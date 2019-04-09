@@ -73,7 +73,7 @@ int main(int argc, char const *argv[])
     populacao.gerar_populacao_inicial();
     populacao.Fitness(problema);
     populacao.selecao(tipo_selecao, parametros_selecao);
-    populacao.crossover_uniforme_bin();
+    populacao.crossover_pmx_intp();
 
 
 }

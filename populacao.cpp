@@ -117,7 +117,7 @@ public:
         }
         printf("\n");
     }
-    void print_gene(int g){
+    void print_cromossomo(int g){
         printf("%d.\t", g);
         for (int j = 0; j < tamanho_cromossomo; j++){
             switch(tipo_variavel){
@@ -157,6 +157,9 @@ public:
     void selecao_vizinhanca(void *parametros);
     void crossover_n_cortes_bin(int qtd_pontos_corte);
     void crossover_uniforme_bin();
+
     void crossover_n_cortes_int(int qtd_pontos_corte);
+
+    void crossover_pmx_intp();
 
     };

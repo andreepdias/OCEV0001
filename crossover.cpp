@@ -9,8 +9,8 @@ void Populacao::crossover_n_cortes_bin(int qtd_pontos_corte){
 
     for(int i = 0; i < tamanho_populacao; i += 2)
     {
-        print_gene(individuos_selecionados[i]);
-        print_gene(individuos_selecionados[i + 1]);
+        print_cromossomo(individuos_selecionados[i]);
+        print_cromossomo(individuos_selecionados[i + 1]);
         for(int j = 0; j < qtd_pontos_corte; j++)
         {
             int ponto_corte_aleatorio;
@@ -40,8 +40,8 @@ void Populacao::crossover_n_cortes_bin(int qtd_pontos_corte){
                 (*individuos_binario)[individuos_selecionados[i + 1]][k] = aux;
             }
         }
-        print_gene(individuos_selecionados[i]);
-        print_gene(individuos_selecionados[i + 1]);
+        print_cromossomo(individuos_selecionados[i]);
+        print_cromossomo(individuos_selecionados[i + 1]);
         printf("\n");
     }
 }
@@ -52,8 +52,8 @@ void Populacao::crossover_uniforme_bin(){
 
     for(int i = 0; i < tamanho_populacao; i += 2)
     {
-        print_gene(individuos_selecionados[i]);
-        print_gene(individuos_selecionados[i + 1]);
+        print_cromossomo(individuos_selecionados[i]);
+        print_cromossomo(individuos_selecionados[i + 1]);
         for(int j = 0; j < tamanho_cromossomo; j++)
         {
             int moeda = distribution(engine);
@@ -64,8 +64,64 @@ void Populacao::crossover_uniforme_bin(){
             }
         }
         
-        print_gene(individuos_selecionados[i]);
-        print_gene(individuos_selecionados[i + 1]);
+        print_cromossomo(individuos_selecionados[i]);
+        print_cromossomo(individuos_selecionados[i + 1]);
         printf("\n");
     }
+}
+
+void Populacao::crossover_pmx_intp(){
+        uniform_int_distribution<int> distribution{1, tamanho_cromossomo - 1};
+
+        vector<int> pontos_corte(2);
+        map<int, int> matching_section_p1;
+        map<int, int> matching_section_p2;
+
+        for(int i = 0; i < tamanho_populacao; i += 2){
+            matching_section_p1.clear();
+            matching_section_p2.clear();
+
+            pontos_corte[0] = distribution(engine);
+            int r;
+            do{
+                r = distribution(engine);
+            }while(r == pontos_corte[0]);
+            pontos_corte[1] = r;
+
+            sort(pontos_corte.begin(), pontos_corte.end());
+
+            int p1 = individuos_selecionados[i];
+            int p2 = individuos_selecionados[i + 1];
+            print_cromossomo(p1);
+            print_cromossomo(p2);
+            printf("Cortes: ");
+            for(int i = 0; i < 2; i++){
+                printf("%d ", pontos_corte[i]);
+            }
+            printf("\n");
+            for(int k = pontos_corte[0]; k < pontos_corte[1]; k++){
+
+                matching_section_p1[(*individuos_inteiro_permutado)[p2][k]] = (*individuos_inteiro_permutado)[p1][k];
+                matching_section_p2[(*individuos_inteiro_permutado)[p1][k]] = (*individuos_inteiro_permutado)[p2][k];
+
+                int aux = (*individuos_inteiro_permutado)[p1][k];
+                (*individuos_inteiro_permutado)[p1][k] = (*individuos_inteiro_permutado)[p2][k];
+                (*individuos_inteiro_permutado)[p2][k] = aux;
+            }
+
+            for(int j = 0; j < tamanho_cromossomo; j++){
+
+                int key = (*individuos_inteiro_permutado)[p1][j];
+                if (matching_section_p1.find(key)  != matching_section_p1.end() ){
+                    (*individuos_inteiro_permutado)[p1][j] = matching_section_p1[key];
+                }
+                key = (*individuos_inteiro_permutado)[p2][j];
+                if (matching_section_p2.find(key)  != matching_section_p2.end() ){
+                    (*individuos_inteiro_permutado)[p2][j] = matching_section_p2[key];
+                }
+            }
+            print_cromossomo(p1);
+            print_cromossomo(p2);
+            printf("\n");
+        }
 }
