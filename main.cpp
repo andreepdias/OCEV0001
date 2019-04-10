@@ -71,9 +71,16 @@ int main(int argc, char const *argv[])
     Populacao populacao(tipo_variavel, tamanho_populacao, tamanho_cromossomo, &limites);
 
     populacao.gerar_populacao_inicial();
-    populacao.Fitness(problema);
-    populacao.selecao(tipo_selecao, parametros_selecao);
-    populacao.crossover_pmx_intp();
+
+    for(int i = 0; i < 1000; i++){
+        populacao.Fitness(problema);
+        populacao.selecao(tipo_selecao, parametros_selecao, true);
+        populacao.crossover_pmx_intp();
+        populacao.swap_mutation(0.05);
+    }
 
 
 }
+
+
+// melhor, pior, média
