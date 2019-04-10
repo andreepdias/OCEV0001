@@ -16,6 +16,11 @@ private:
     vector<vector<int> > *individuos_inteiro_permutado = NULL;
     vector<vector<double> > *individuos_real = NULL;
 
+    vector<vector<bool> > *individuos_intermediarios_binario = NULL;
+    vector<vector<int> > *individuos_intermediarios_inteiro = NULL;
+    vector<vector<int> > *individuos_intermediarios_inteiro_permutado = NULL;
+    vector<vector<double> > *individuos_intermediarios_real = NULL;
+
     Dominio_Binario *db = NULL;
     Dominio_Inteiro_Permutado *dp = NULL;
     Dominio_Inteiro *di = NULL;
@@ -39,19 +44,19 @@ public:
         switch (tipo_variavel){
         case BINARIO:
             individuos_binario = new vector<vector<bool> >();
-            db = new Dominio_Binario(tamanho_populacao, tamanho_cromossomo, limites, individuos_binario, fitness);
+            db = new Dominio_Binario(tamanho_populacao, tamanho_cromossomo, limites, individuos_binario, individuos_intermediarios_binario, fitness);
             break;
         case INTEIRO:
             individuos_inteiro = new vector<vector<int> >();
-            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, fitness);
+            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, individuos_intermediarios_inteiro, fitness);
             break;
         case INTEIRO_PERMUTADO:
             individuos_inteiro_permutado = new vector<vector<int> >();
-            dp = new Dominio_Inteiro_Permutado(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro_permutado, fitness);
+            dp = new Dominio_Inteiro_Permutado(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro_permutado, individuos_intermediarios_inteiro_permutado, fitness);
             break;
         case REAL:
             individuos_real = new vector<vector<double> >();
-            dr = new Dominio_Real(tamanho_populacao, tamanho_cromossomo, limites, individuos_real, fitness);
+            dr = new Dominio_Real(tamanho_populacao, tamanho_cromossomo, limites, individuos_real, individuos_intermediarios_real, fitness);
             break;
         }
     }
@@ -93,6 +98,19 @@ public:
             case 4: selecao_vizinhanca(parametros_selecao); break;
         }
         print_selecionados();
+        
+        for(int i = 0; i < tamanho_populacao; i++){
+            switch(tipo_variavel){
+                case BINARIO:
+                    (*individuos_intermediarios_binario)[i] = (*individuos_binario)[individuos_selecionados[i]]; break;
+                case INTEIRO:
+                    (*individuos_intermediarios_inteiro)[i] = (*individuos_inteiro)[individuos_selecionados[i]]; break;
+                case INTEIRO_PERMUTADO:
+                    (*individuos_intermediarios_inteiro_permutado)[i] = (*individuos_inteiro_permutado)[individuos_selecionados[i]]; break;
+                case REAL:
+                    (*individuos_intermediarios_real)[i] = (*individuos_real)[individuos_selecionados[i]]; break;
+            }
+        }
     }
 
 
@@ -159,7 +177,11 @@ public:
     void crossover_uniforme_bin();
 
     void crossover_n_cortes_int(int qtd_pontos_corte);
+    void crossover_uniforme_int();
+    void crossover_blx_real(double alpha = 0.5);
+    void crossover_media_uniforme_real();
+    void crossover_aritmetico_real(double alpha = 0.5);
 
-    void crossover_pmx_intp();
+        void crossover_pmx_intp();
 
     };
