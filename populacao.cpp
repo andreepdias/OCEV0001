@@ -120,12 +120,12 @@ public:
 
         double pior = 1.0, melhor = 0.0, media = 0.0, k;
         int indice_melhor;
-        
+
         for(int i = 0; i < tamanho_populacao; i++){
             k = (*fitness)[i];
             pior = min(k, pior);
             media += k;
-            
+
             if(k > melhor){
                 melhor = k;
                 indice_melhor = i;
@@ -235,5 +235,7 @@ public:
     void crossover_pmx_intp();
 
     void swap_mutation(double probabilidade);
+    void bit_flip(double probabilidade);
+    void mutacao_delta(double limite_inferior, double limite_superior, int denominador);
 
     };

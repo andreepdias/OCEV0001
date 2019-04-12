@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
     int tipo_variavel, tamanho_populacao, tamanho_cromossomo, numero_variaveis, tipo_selecao;
     double limite_inferior, limite_superior;
     string problema;
-    
+
     vector<pair<double, double> > limites;
 
     int k, d, tipo_vizinhanca;
@@ -21,12 +21,12 @@ int main(int argc, char const *argv[])
         printf("%s <arquivo_parametros> <tipo_selecao>\n\n<tipo_selecao>:\n1: Roleta sem reposicao\n2: Ranking Uniforme\n3: Torneio Estocastico\n4: Vizinhanca Linear\n", argv[0]);
         return 1;
     }
-    
+
     tipo_selecao = atoi(argv[2]);
     if(tipo_selecao == 3){
         if(argc != 5){
             k = 2;
-            kp = 1.0;            
+            kp = 1.0;
         }else{
             k = atoi(argv[3]);
             kp = atof(argv[4]);
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
         case 3: parametros_selecao = (void*)&parametros_torneio; break;
         case 4: parametros_selecao = (void*)&parametros_vizinhanca; break;
     }
-
+    // printf("aaaaa\n");
     ifstream arquivo_parametros;
     arquivo_parametros.open(argv[1]);
 
@@ -61,12 +61,16 @@ int main(int argc, char const *argv[])
     arquivo_parametros >> tamanho_populacao;
     arquivo_parametros >> tamanho_cromossomo;
     arquivo_parametros >> numero_variaveis;
-    
+
+    // printf("b\n");
     for(int i = 0; i < numero_variaveis; i++){
         arquivo_parametros >> limite_inferior;
+        // printf("c\n");
         arquivo_parametros >> limite_superior;
+        // printf("d\n");
         limites.push_back(make_pair(limite_inferior, limite_superior));
     }
+    // printf("e\n");
 
     Populacao populacao(tipo_variavel, tamanho_populacao, tamanho_cromossomo, &limites);
 

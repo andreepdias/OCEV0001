@@ -4,7 +4,7 @@ using namespace std;
 
 int Populacao::girar_roleta(vector<pair<double, int> > &participantes, int ignorado){
     uniform_real_distribution<double> distribution{0.0, 1.0};
-    
+
     double soma_acumulada = 0.0;
     double r = distribution(engine);
 
@@ -15,6 +15,7 @@ int Populacao::girar_roleta(vector<pair<double, int> > &participantes, int ignor
         }
         soma_acumulada += participantes[i].first;
     }
+    return -1;
 }
 
 void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int n_escolhidos, int &k)
@@ -27,14 +28,14 @@ void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int
     }
 
     double somatorio_atual, individuo_escolhido = -1;
-    while(n_escolhidos--){ // ESCOLHE OS INDIVIUDOS 
+    while(n_escolhidos--){ // ESCOLHE OS INDIVIUDOS
         somatorio_atual = somatorio;
 
         if(individuo_escolhido != -1){ // IGONRA INDIVIUDO ESCOLHIO
             somatorio_atual -= valor(individuo_escolhido);
         }
         somatorio_atual = somatorio_atual == 0 ? DBL_EPSILON : somatorio_atual;
-    
+
         for(int x = 0; x < individuos.size(); x++){ // CALCULA FINESS RELATIVO
             if(individuos[x] == individuo_escolhido) continue;
             fitness_relativo[x].second = individuos[x];
@@ -163,7 +164,7 @@ void Populacao::selecao_vizinhanca(void *parametros)
             do{
                 r = distribution_d(engine);
             }while(r == 0);
-            
+
             int p = posicao(individuo_aleatorio, r);
 
             individuos_selecionados[x * 2 + 1] = p;
