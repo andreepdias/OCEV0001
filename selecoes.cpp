@@ -138,7 +138,7 @@ void Populacao::selecao_vizinhanca()
         individuo_aleatorio = distribution(engine);
         (*individuos_selecionados)[x * 2] = individuo_aleatorio;
 
-        printf("Individuo escolhido:\t\t\t\t%d\n", individuo_aleatorio);
+        // printf("Individuo escolhido:\t\t\t\t%d\n", individuo_aleatorio);
         if(t == 1){ // ESCOLHE MELHOR INDIVÍDUO DA VIZINHANÇA
             pair<double, int> melhor_individuo = make_pair(0.0, -1);
             for (int i = -d; i <= d; i++){

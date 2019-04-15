@@ -28,13 +28,17 @@ private:
     vector<vector<bool> > *individuos_intermediarios;
     vector<bool> *melhor_individuo;
     vector<double> *fitness;
+    vector<double> *infracoes;
+    vector<double> *funcoes_objetivo;
     vector<int> *individuos_selecionados;
 
     random_device device{};
     mt19937 engine{device()};
 public:
-    Dominio_Binario(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<bool> > *_i, vector<vector<bool> > *_ii, vector<bool> *_m, vector<double> *_f, vector<int> *_is, int _pc, int _pm){
+    Dominio_Binario(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<bool> > *_i, vector<vector<bool> > *_ii, vector<bool> *_m, vector<double> *_f, vector<int> *_is, int _pc, int _pm, vector<double> *_if, vector<double> *_fo){
         fitness = _f;
+        infracoes = _if;
+        funcoes_objetivo = _fo;
         tamanho_populacao = _tp;
         tamanho_cromossomo = _tc;
         limites = _l;
@@ -61,6 +65,7 @@ public:
 
     void funcaoCOS();
     void radiosSTLX();
+    vector <pair<string, double> > calcula_variaveis_radios(int indice);
 
     void crossover_n_cortes_bin(int qtd_pontos_corte);
     void crossover_uniforme_bin();

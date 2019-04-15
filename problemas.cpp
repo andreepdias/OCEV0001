@@ -26,8 +26,8 @@ void Dominio_Binario::funcaoCOS(){
 
 void Dominio_Binario::radiosSTLX()
 {
-    int valor_st, valor_lx;
-    double funcao_objetivo, penalizacao;
+    double valor_st, valor_lx;
+    double valor_funcao_objetivo, penalizacao;
 
     for(size_t i = 0; i < tamanho_populacao; i++){
         valor_st = 0;
@@ -36,13 +36,34 @@ void Dominio_Binario::radiosSTLX()
             valor_st += (*individuos)[i][j] * pow(2, j);
             valor_lx += (*individuos)[i][j + tamanho_cromossomo / 2] * pow(2, j);
         }
-        valor_st = roundf(24.0 / 31 * valor_st);
-        valor_lx = roundf(16.0 / 31 * valor_lx);
-        penalizacao = max(0.0, ((valor_st + 2 * valor_lx - 40) * 1.0) / 16);
-        funcao_objetivo = ((30 * valor_st + 40 * valor_lx) * 1.0) / 1360;
-        (*fitness)[i] = max((funcao_objetivo - penalizacao), 0.0);
+        valor_st = roundf((24.0 / 31) * valor_st);
+        valor_lx = roundf((16.0 / 31) * valor_lx);
+        if(valor_st > 24){
+            printf("st: %lf\n", valor_st);
+        }
+        if(valor_lx > 24){
+            printf("lx: %lf\n", valor_lx);
+        }
+        penalizacao = max(0.0, double(valor_st + 2 * valor_lx - 40) / 16); //penalização baseada na quantidade de homens possível
+        (*infracoes)[i] = penalizacao;
+        valor_funcao_objetivo = ((30 * valor_st + 40 * valor_lx) * 1.0);
+        (*funcoes_objetivo)[i] = valor_funcao_objetivo;
+        valor_funcao_objetivo /= 1040;  //normalização com o total alcançavel
+        (*fitness)[i] = max((valor_funcao_objetivo - penalizacao),0.0);
     }
     
+}
+
+vector<pair<string, double> > Dominio_Binario::calcula_variaveis_radios(int indice ){
+    vector<pair<string, double> > variaveis(2);
+    double st = 0, lx = 0;
+    for (int i = 0; i < tamanho_cromossomo / 2; i++){
+        st += (*individuos)[indice][i] * pow(2, i);
+        lx += (*individuos)[indice][i + tamanho_cromossomo / 2] * pow(2, i);
+    }
+    variaveis[0] = make_pair("standard", st);
+    variaveis[1] = make_pair("deluxe", lx);
+    return variaveis;
 }
 
 void Dominio_Inteiro_Permutado::NQueens()

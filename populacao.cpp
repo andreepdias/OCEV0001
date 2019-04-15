@@ -27,6 +27,7 @@ private:
     bool elitismo;
     int problema;
 
+
     int k; double kp;
     int t, d;
     
@@ -48,6 +49,9 @@ private:
     vector<int> *melhor_individuo_inteiro = NULL;
     vector<int> *melhor_individuo_inteiro_permutado = NULL;
     vector<double> *melhor_individuo_real = NULL;
+    
+    vector<double> *infracoes;
+    vector<double> *funcoes_objetivo;
 
     double melhor_individuo_fitness;
 
@@ -91,12 +95,18 @@ public:
         individuos_selecionados = new vector<int>();
         (*individuos_selecionados).resize(tamanho_populacao);
 
+        infracoes = new vector<double>();
+        (*infracoes).resize(tamanho_populacao);
+
+        funcoes_objetivo = new vector<double>();
+        (*funcoes_objetivo).resize(tamanho_populacao);
+
         switch (tipo_variavel){
         case BINARIO:
             melhor_individuo_binario = new vector<bool>();
             individuos_binario = new vector<vector<bool> >();
             individuos_intermediarios_binario = new vector<vector<bool> >();
-            db = new Dominio_Binario(tamanho_populacao, tamanho_cromossomo, limites, individuos_binario, individuos_intermediarios_binario, melhor_individuo_binario, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao);
+            db = new Dominio_Binario(tamanho_populacao, tamanho_cromossomo, limites, individuos_binario, individuos_intermediarios_binario, melhor_individuo_binario, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo);
             break;
         case INTEIRO:
             melhor_individuo_inteiro = new vector<int>();
@@ -215,8 +225,20 @@ public:
         }
         printf("%d %lf %lf %lf\n", k, melhor, pior, media);
         out << k << " " << melhor << " " << pior << " " << media << endl;
-    
         
+    }
+
+    void print_finalizacao_execucao(){
+        double melhor = -0.1;
+        int indice_melhor;
+        for(int i = 0; i < tamanho_populacao; i++){
+            if((*fitness)[i] > melhor){
+                melhor = (*fitness)[i];
+                indice_melhor = i;
+            }
+        }
+        vector<pair<string, double> > variaveis = (*db).calcula_variaveis_radios(indice_melhor);
+        printf("Melhor individuo:\n\tFitness: %lf\n\tFuncao Objetivo: %lf\n\tPenalizacao: %lf\n", (*fitness)[indice_melhor], (*funcoes_objetivo)[indice_melhor], (*infracoes)[indice_melhor]);
     }
 
     void selecao(){

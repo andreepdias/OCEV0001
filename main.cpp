@@ -26,15 +26,14 @@ int main(int argc, char const *argv[])
     ofstream out;
     out.open("tempos");
 
-    for(int i = 0; i < parametros.GEN; i++){
+    for(int i = 0; i < parametros.GEN - 1; i++){
          populacao.Fitness(i, out);
          populacao.selecao();
          populacao.crossover();
          populacao.mutation();
     }
-    populacao.Fitness(parametros.GEN, out);
-
-
+    populacao.Fitness(parametros.GEN - 1, out);
+    populacao.print_finalizacao_execucao();
 }
 
 
