@@ -1,9 +1,11 @@
-#include <bits/stdc++.h>
+#ifndef __PROBLEMAS_CPP
+#define __PROBLEMAS_CPP
+
 #include "dominios.cpp"
 using namespace std;
 
 
-int Dominio_Binario::funcaoCOS(){
+void Dominio_Binario::funcaoCOS(){
 
     double x, fx, max, min;
     int l = pow(2, 16) - 1, d;
@@ -20,10 +22,10 @@ int Dominio_Binario::funcaoCOS(){
         (*fitness)[i] = (max);
     }
 
-    return 0;
 }
 
-int Dominio_Binario::radiosSTLX(){
+void Dominio_Binario::radiosSTLX()
+{
     int valor_st, valor_lx;
     double funcao_objetivo, penalizacao;
 
@@ -40,14 +42,13 @@ int Dominio_Binario::radiosSTLX(){
         funcao_objetivo = ((30 * valor_st + 40 * valor_lx) * 1.0) / 1360;
         (*fitness)[i] = (funcao_objetivo - penalizacao);
     }
-    return 0;
     
 }
 
-int Dominio_Inteiro_Permutado::NQueens(){
+void Dominio_Inteiro_Permutado::NQueens()
+{
     int colisoes;
     int indice_pior = -1;
-    double pior = 1.1;
 
     for(int i = 0; i < tamanho_populacao; i++){ // percorre todas as soluções
         colisoes = 0;
@@ -89,12 +90,8 @@ int Dominio_Inteiro_Permutado::NQueens(){
             }
         }
         (*fitness)[i] = (1 - (colisoes * 1.0) / tamanho_cromossomo);
-
-        if((*fitness)[i] < pior){
-            pior = (*fitness)[i];
-            indice_pior = i;
-        }
     }
-    return indice_pior;
     
 }
+
+#endif

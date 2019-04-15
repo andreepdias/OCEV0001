@@ -1,4 +1,6 @@
-#include <bits/stdc++.h>
+#ifndef __SELECOES_CPP
+#define __SELECOES_CPP
+
 #include "populacao.cpp"
 using namespace std;
 
@@ -42,11 +44,11 @@ void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int
             fitness_relativo[x].first = valor(individuos[x]) / somatorio_atual;
         }
         int escolhido = girar_roleta(fitness_relativo, individuo_escolhido); // GIRA ROLETA E ESCOLHE
-        individuos_selecionados[k++] = individuo_escolhido = escolhido;
+        (*individuos_selecionados)[k++] = individuo_escolhido = escolhido;
     }
 }
 
-void Populacao::selecao_roleta(void *parametros)
+void Populacao::selecao_roleta()
 {
     int k = 0;
     vector<int> individuos(tamanho_populacao);
@@ -58,7 +60,7 @@ void Populacao::selecao_roleta(void *parametros)
     roleta(individuos, valor, tamanho_populacao, k);
 }
 
-void Populacao::selecao_ranking(void *parametros)
+void Populacao::selecao_ranking()
 {
     vector<pair<double, int>> ranking_individuos(tamanho_populacao);
 
@@ -79,15 +81,10 @@ void Populacao::selecao_ranking(void *parametros)
     roleta(individuos, valor, tamanho_populacao, k);
 }
 
-void Populacao::selecao_torneio(void *parametros)
+void Populacao::selecao_torneio()
 {
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     uniform_int_distribution<int> distribution_int(0, tamanho_populacao - 1);
-
-    pair<int, double> *p = (pair<int, double> *)parametros;
-
-    int k = (*p).first;
-    double kp = (*p).second;
 
     vector<pair<double, int>> individuos_torneio(k);
     map<int, bool> individuos_escolhidos;
@@ -111,20 +108,16 @@ void Populacao::selecao_torneio(void *parametros)
         rr = distribution_real(engine);
 
         if (kp >= rr){
-            individuos_selecionados[x] = individuos_torneio[k - 1].second;
+            (*individuos_selecionados)[x] = individuos_torneio[k - 1].second;
         }else{
-            individuos_selecionados[x] = individuos_torneio[0].second;
+            (*individuos_selecionados)[x] = individuos_torneio[0].second;
         }
     }
 }
 
-void Populacao::selecao_vizinhanca(void *parametros)
+void Populacao::selecao_vizinhanca()
 {
     uniform_int_distribution<int> distribution(0, tamanho_populacao - 1);
-
-    pair<int, int> *p = (pair<int, int>*)parametros;
-    int d = (*p).first;
-    int t = (*p).second;
 
     int r, i;
     int individuo_aleatorio;
@@ -143,7 +136,7 @@ void Populacao::selecao_vizinhanca(void *parametros)
 
     for(int x = 0; x < tamanho_populacao / 2; x++){
         individuo_aleatorio = distribution(engine);
-        individuos_selecionados[x * 2] = individuo_aleatorio;
+        (*individuos_selecionados)[x * 2] = individuo_aleatorio;
 
         printf("Individuo escolhido:\t\t\t\t%d\n", individuo_aleatorio);
         if(t == 1){ // ESCOLHE MELHOR INDIVÍDUO DA VIZINHANÇA
@@ -158,7 +151,7 @@ void Populacao::selecao_vizinhanca(void *parametros)
                     melhor_individuo.second = p;
                 }
             }
-            individuos_selecionados[x * 2 + 1] = melhor_individuo.second;
+            (*individuos_selecionados)[x * 2 + 1] = melhor_individuo.second;
             printf("Inviduo escolhido melhor vizinhanca:\t\t%d\n\n", melhor_individuo.second);
         }else if(t == 2){ // ESCOLHE INDIVÍDUO ALEATÓRIO DA VIZINHANÇA
             do{
@@ -167,7 +160,7 @@ void Populacao::selecao_vizinhanca(void *parametros)
 
             int p = posicao(individuo_aleatorio, r);
 
-            individuos_selecionados[x * 2 + 1] = p;
+            (*individuos_selecionados)[x * 2 + 1] = p;
             printf("Inviduo escolhido aleatorio vizinhanca:\t\t%d\n\n", p);
         }else if(t == 3){ // ESCOLHE INDIVÍDUO DA VIZINHANÇA PROPORCINAL AO FITNESS
             double somatorio = 0;
@@ -185,6 +178,9 @@ void Populacao::selecao_vizinhanca(void *parametros)
         }
     }
     if(tamanho_populacao % 2 != 0){
-        individuos_selecionados[tamanho_populacao - 1] = distribution(engine);
+        (*individuos_selecionados)[tamanho_populacao - 1] = distribution(engine);
     }
 }
+
+
+#endif

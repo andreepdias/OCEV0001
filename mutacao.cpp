@@ -1,8 +1,11 @@
-#include <bits/stdc++.h>
+#ifndef __MUTACAO_CPP
+#define __MUTACAO_CPP
+
 #include "populacao.cpp"
 using namespace std;
 
-void Populacao::swap_mutation(double probabilidade){
+void Dominio_Inteiro_Permutado::swap_mutation()
+{
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     uniform_int_distribution<int> distribution_int(0, tamanho_cromossomo - 1);
     double r;
@@ -12,20 +15,20 @@ void Populacao::swap_mutation(double probabilidade){
         for(int j = 0; j < tamanho_cromossomo; j++){
             // printf("j: %d\n", j);
             r = distribution_real(engine);
-            if(r <= probabilidade){
+            if(r <= probabilidade_mutacao){
                 do{
                     g = distribution_int(engine);
                 }while(g == j);
                 // printf("i: %d\tj: %d\n", i, j);
-                int aux = (*individuos_inteiro_permutado)[i][j];
-                (*individuos_inteiro_permutado)[i][j] = (*individuos_inteiro_permutado)[i][g];
-                (*individuos_inteiro_permutado)[i][g] = aux;
+                int aux = (*individuos)[i][j];
+                (*individuos)[i][j] = (*individuos)[i][g];
+                (*individuos)[i][g] = aux;
             }
         }
     }
 
 }
-
+/*
 void Populacao::bit_flip(double probabilidade){
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     double r;
@@ -59,3 +62,6 @@ void Populacao::mutacao_delta(double limite_inferior, double limite_superior, in
         }
     }
 }
+*/
+
+#endif
