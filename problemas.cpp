@@ -40,7 +40,7 @@ void Dominio_Binario::radiosSTLX()
         valor_lx = roundf(16.0 / 31 * valor_lx);
         penalizacao = max(0.0, ((valor_st + 2 * valor_lx - 40) * 1.0) / 16);
         funcao_objetivo = ((30 * valor_st + 40 * valor_lx) * 1.0) / 1360;
-        (*fitness)[i] = (funcao_objetivo - penalizacao);
+        (*fitness)[i] = max((funcao_objetivo - penalizacao), 0.0);
     }
     
 }

@@ -128,19 +128,27 @@ public:
                 break;
             case INTEIRO:
                 (*di).gerar_populacao_inicial();
+                (*melhor_individuo_inteiro) = (*individuos_inteiro)[0];
+                melhor_individuo_fitness = 0;
                 break;
             case INTEIRO_PERMUTADO:
+                (*melhor_individuo_inteiro_permutado) = (*individuos_inteiro_permutado)[0];
+                melhor_individuo_fitness = 0;
                 (*dp).gerar_populacao_inicial();
                 break;
             case REAL:
+                (*melhor_individuo_real) = (*individuos_real)[0];
+                melhor_individuo_fitness = 0;
                 (*dr).gerar_populacao_inicial();
                 break;
         }
     }
 
-    void Fitness(){
+    void Fitness(int k, ofstream &out){
         if(problema == 1){
             (*dp).NQueens();
+        }else if(problema == 2){
+            (*db).radiosSTLX();
         }
         /*
         else if(problema == "FuncaoCOS"){
@@ -158,37 +166,20 @@ public:
             double fit = (*fitness)[i];
             media += fit;
 
-            if(fit > melhor){
+            if(fit >= melhor){
                 indice_melhor = i;
                 melhor = fit;
             }
-            if(fit < pior){
+            if(fit <= pior){
                 indice_pior = i;
                 pior = fit;
             }
         }
         media /= tamanho_populacao;
-        printf("%lf %lf %lf\n", melhor, pior, media);
 
         if(elitismo){
-            /* TROCA PIOR ÍNDIVIDUO PELO MELHOR DA GERAÇÃO ANTERIOR */        
-            switch(tipo_variavel){
-                case BINARIO:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_binario)[indice_pior] = (*melhor_individuo_binario); break;
-                case INTEIRO:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_inteiro)[indice_pior] = (*melhor_individuo_inteiro); break;
-                case INTEIRO_PERMUTADO:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_inteiro_permutado)[indice_pior] = (*melhor_individuo_inteiro_permutado); break;
-                case REAL:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_real)[indice_pior] = (*melhor_individuo_real); break;
-            }
-
             /* MEMORIZA MELHOR INDIVIDUO DESSA GERAÇÃO */
-            if(melhor > melhor_individuo_fitness){
+            if(melhor >= melhor_individuo_fitness){
                 melhor_individuo_fitness = melhor;
                 switch(tipo_variavel){
                     case BINARIO:
@@ -205,7 +196,25 @@ public:
                         break;
                 }
             }
+            /* TROCA PIOR ÍNDIVIDUO PELO MELHOR DA GERAÇÃO ANTERIOR */        
+            switch(tipo_variavel){
+                case BINARIO:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_binario)[indice_pior] = (*melhor_individuo_binario); break;
+                case INTEIRO:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_inteiro)[indice_pior] = (*melhor_individuo_inteiro); break;
+                case INTEIRO_PERMUTADO:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_inteiro_permutado)[indice_pior] = (*melhor_individuo_inteiro_permutado); break;
+                case REAL:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_real)[indice_pior] = (*melhor_individuo_real); break;
+            }
+            melhor = max(melhor, melhor_individuo_fitness);
         }
+        printf("%d %lf %lf %lf\n", k, melhor, pior, media);
+        out << k << " " << melhor << " " << pior << " " << media << endl;
     
         
     }
@@ -269,6 +278,8 @@ public:
 
     void mutation(){
         switch(tipo_mutacao){
+            case 1:
+                bit_flip(); break;
             case 3:
                 (*dp).swap_mutation(); break;
         }
@@ -335,6 +346,8 @@ public:
     void selecao_ranking();
     void selecao_torneio();
     void selecao_vizinhanca();
+
+    void bit_flip();
 
     // void crossover_n_cortes_bin(int qtd_pontos_corte);
     // void crossover_uniforme_bin();

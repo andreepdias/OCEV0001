@@ -28,8 +28,8 @@ void Dominio_Inteiro_Permutado::swap_mutation()
     }
 
 }
-/*
-void Populacao::bit_flip(double probabilidade){
+
+void Populacao::bit_flip(){
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     double r;
     for(int i = 0; i < tamanho_populacao; i++){
@@ -37,13 +37,13 @@ void Populacao::bit_flip(double probabilidade){
         for(int j = 0; j < tamanho_cromossomo; j++){
             // printf("j: %d\n", j);
             r = distribution_real(engine);
-            if(r <= probabilidade){
+            if(r <= probabilidade_mutacao){
                 (*individuos_binario)[i][j] = !((*individuos_binario)[i][j]);
             }
         }
     }
 }
-
+/*
 void Populacao::mutacao_delta(double limite_inferior, double limite_superior, int denominador = 10){
     uniform_real_distribution<double> distribution_real{limite_inferior, limite_superior};
     uniform_int_distribution<int> distribution_int{0, 1};

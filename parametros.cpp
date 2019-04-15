@@ -188,6 +188,9 @@ public:
                 if(v == "NQUEENS"){
                     PROBLEM = 1;
                     printf("NQueens\n");
+                }else if(v == "RADIOS"){
+                    PROBLEM = 2;
+                    printf("Radios\n");
                 }
             }
         }

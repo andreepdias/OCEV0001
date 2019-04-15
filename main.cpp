@@ -23,13 +23,16 @@ int main(int argc, char const *argv[])
     Populacao populacao(parametros);
     populacao.gerar_populacao_inicial();
 
+    ofstream out;
+    out.open("tempos");
+
     for(int i = 0; i < parametros.GEN; i++){
-         populacao.Fitness();
+         populacao.Fitness(i, out);
          populacao.selecao();
          populacao.crossover();
          populacao.mutation();
     }
-    populacao.Fitness();
+    populacao.Fitness(parametros.GEN, out);
 
 
 }
