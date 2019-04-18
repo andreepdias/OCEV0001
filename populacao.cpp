@@ -89,6 +89,8 @@ public:
         d = p.d;
         c = p.c;
 
+        printf("PC: %lf\n", probabilidade_crossover);
+
         fitness = new vector<double>();
         (*fitness).resize(tamanho_populacao);
         
@@ -142,14 +144,14 @@ public:
                 melhor_individuo_fitness = 0;
                 break;
             case INTEIRO_PERMUTADO:
+                (*dp).gerar_populacao_inicial();
                 (*melhor_individuo_inteiro_permutado) = (*individuos_inteiro_permutado)[0];
                 melhor_individuo_fitness = 0;
-                (*dp).gerar_populacao_inicial();
                 break;
             case REAL:
+                (*dr).gerar_populacao_inicial();
                 (*melhor_individuo_real) = (*individuos_real)[0];
                 melhor_individuo_fitness = 0;
-                (*dr).gerar_populacao_inicial();
                 break;
         }
     }
@@ -188,6 +190,21 @@ public:
         media /= tamanho_populacao;
 
         if(elitismo){
+            /* TROCA PIOR ÍNDIVIDUO PELO MELHOR DA GERAÇÃO ANTERIOR */        
+            switch(tipo_variavel){
+                case BINARIO:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_binario)[indice_pior] = (*melhor_individuo_binario); break;
+                case INTEIRO:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_inteiro)[indice_pior] = (*melhor_individuo_inteiro); break;
+                case INTEIRO_PERMUTADO:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_inteiro_permutado)[indice_pior] = (*melhor_individuo_inteiro_permutado); break;
+                case REAL:
+                    (*fitness)[indice_pior] = melhor_individuo_fitness;
+                    (*individuos_real)[indice_pior] = (*melhor_individuo_real); break;
+            }
             /* MEMORIZA MELHOR INDIVIDUO DESSA GERAÇÃO */
             if(melhor >= melhor_individuo_fitness){
                 melhor_individuo_fitness = melhor;
@@ -206,21 +223,6 @@ public:
                         break;
                 }
             }
-            /* TROCA PIOR ÍNDIVIDUO PELO MELHOR DA GERAÇÃO ANTERIOR */        
-            switch(tipo_variavel){
-                case BINARIO:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_binario)[indice_pior] = (*melhor_individuo_binario); break;
-                case INTEIRO:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_inteiro)[indice_pior] = (*melhor_individuo_inteiro); break;
-                case INTEIRO_PERMUTADO:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_inteiro_permutado)[indice_pior] = (*melhor_individuo_inteiro_permutado); break;
-                case REAL:
-                    (*fitness)[indice_pior] = melhor_individuo_fitness;
-                    (*individuos_real)[indice_pior] = (*melhor_individuo_real); break;
-            }
             melhor = max(melhor, melhor_individuo_fitness);
         }
         printf("%d %lf %lf %lf\n", k, melhor, pior, media);
@@ -228,18 +230,6 @@ public:
         
     }
 
-    void print_finalizacao_execucao(){
-        double melhor = -0.1;
-        int indice_melhor;
-        for(int i = 0; i < tamanho_populacao; i++){
-            if((*fitness)[i] > melhor){
-                melhor = (*fitness)[i];
-                indice_melhor = i;
-            }
-        }
-        vector<pair<string, double> > variaveis = (*db).calcula_variaveis_radios(indice_melhor);
-        printf("Melhor individuo:\n\tFitness: %lf\n\tFuncao Objetivo: %lf\n\tPenalizacao: %lf\n", (*fitness)[indice_melhor], (*funcoes_objetivo)[indice_melhor], (*infracoes)[indice_melhor]);
-    }
 
     void selecao(){
         switch(tipo_selecao){
@@ -293,7 +283,7 @@ public:
             case 6:
                 (*dr).crossover_media_uniforme_real(); break;
                 */
-        case 7:
+        case 8  :
             (*dp).crossover_pmx_intp();
         }
     }
@@ -307,6 +297,18 @@ public:
         }
     }
 
+    void print_finalizacao_execucao(){
+        double melhor = -0.1;
+        int indice_melhor;
+        for(int i = 0; i < tamanho_populacao; i++){
+            if((*fitness)[i] > melhor){
+                melhor = (*fitness)[i];
+                indice_melhor = i;
+            }
+        }
+        vector<pair<string, double> > variaveis = (*db).calcula_variaveis_radios(indice_melhor);
+        printf("Melhor individuo:\n\tFitness: %lf\n\tFuncao Objetivo: %lf\n\tPenalizacao: %lf\n", (*fitness)[indice_melhor], (*funcoes_objetivo)[indice_melhor], (*infracoes)[indice_melhor]);
+    }
     void print_populacao(){
         printf("Populacao:\n");
         for (int i = 0; i < tamanho_populacao; i++){
@@ -324,6 +326,7 @@ public:
                 }
                 printf(" ");
             }
+            printf("\t(%lf)", (*fitness)[i]);
             printf("\n");
         }
         printf("\n");

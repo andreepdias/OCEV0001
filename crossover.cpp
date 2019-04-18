@@ -201,89 +201,104 @@ void Populacao::crossover_aritmetico_real(double alpha = 0.5){
 */
 void Dominio_Inteiro_Permutado::crossover_pmx_intp()
 {
-    uniform_int_distribution<int> distribution{1, tamanho_cromossomo - 1};
 
-    vector<int> pontos_corte(2);
-    map<int, int> matching_section_p1;
-    map<int, int> matching_section_p2;
+    auto printIndiv = [&](int k){
+        for(int i = 0; i < tamanho_cromossomo; i++){
+            printf("%d ", (*individuos)[k][i]);
+        }
+        printf("\n");
+    };
 
+    
+    #pragma omp parallel
+    #pragma omp for schedule(dynamic)
     for (int i = 0; i < tamanho_populacao; i += 2)
     {
-        matching_section_p1.clear();
-        matching_section_p2.clear();
 
-        pontos_corte[0] = distribution(engine);
-        int r;
-        do
-        {
-            r = distribution(engine);
-        } while (r == pontos_corte[0]);
-        pontos_corte[1] = r;
+        uniform_int_distribution<int> distribution{1, tamanho_cromossomo - 1};
+        uniform_real_distribution<double> distribution_real{0, 1};
 
-        sort(pontos_corte.begin(), pontos_corte.end());
+        vector<int> pontos_corte(2);
+        map<int, int> matching_section_p1;
+        map<int, int> matching_section_p2;
 
-        int p1 = (*individuos_selecionados)[i];
-        int p2 = (*individuos_selecionados)[i + 1];
-        /*
-            print_cromossomo(p1);
-            print_cromossomo(p2);
-            printf("Cortes: ");
-            for(int i = 0; i < 2; i++){
-                printf("%d ", pontos_corte[i]);
+
+        double rd = distribution_real(engine);
+        if(rd < probabilidade_crossover){
+
+            // printf("Antes:\n");
+            // printIndiv(i);
+            // printIndiv(i + 1);
+
+            matching_section_p1.clear();
+            matching_section_p2.clear();
+
+            pontos_corte[0] = distribution(engine);
+            int r;
+            do
+            {
+                r = distribution(engine);
+            } while (r == pontos_corte[0]);
+            pontos_corte[1] = r;
+
+            sort(pontos_corte.begin(), pontos_corte.end());
+
+            // printf("Cortes: ");
+            // for(int i = 0; i < 2; i++){
+            //     printf("%d ", pontos_corte[i]);
+            // }
+            // printf("\n");
+            for (int k = pontos_corte[0]; k < pontos_corte[1]; k++)
+            {
+
+                int aux = (*individuos)[i][k];
+                (*individuos)[i][k] = (*individuos)[i + 1][k];
+                (*individuos)[i + 1][k] = aux;
+
+                int e1 = (*individuos)[i][k];
+                int e2 = (*individuos)[i + 1][k];
+
+                matching_section_p1[e1] = e2;
+                matching_section_p2[e2] = e1;
             }
-            printf("\n");
-            */
-        for (int k = pontos_corte[0]; k < pontos_corte[1]; k++)
-        {
 
-            int aux = (*individuos)[p1][k];
-            (*individuos)[p1][k] = (*individuos)[p2][k];
-            (*individuos)[p2][k] = aux;
 
-            int e1 = (*individuos)[p1][k];
-            int e2 = (*individuos)[p2][k];
+            for (int j = 0; j < pontos_corte[0]; j++)
+            {
+                int key = (*individuos)[i][j];
+                while (matching_section_p1.find(key) != matching_section_p1.end())
+                {
+                    key = matching_section_p1[key];
+                }
+                (*individuos)[i][j] = key;
 
-            matching_section_p1[e1] = e2;
-            matching_section_p2[e2] = e1;
+                key = (*individuos)[i + 1][j];
+                while (matching_section_p2.find(key) != matching_section_p2.end())
+                {
+                    key = matching_section_p2[key];
+                }
+                (*individuos)[i + 1][j] = key;
+            }
+            for (int j = pontos_corte[1]; j < tamanho_cromossomo; j++)
+            {
+                int key = (*individuos)[i][j];
+                while (matching_section_p1.find(key) != matching_section_p1.end())
+                {
+                    key = matching_section_p1[key];
+                }
+                (*individuos)[i][j] = key;
+
+                key = (*individuos)[i + 1][j];
+                while (matching_section_p2.find(key) != matching_section_p2.end())
+                {
+                    key = matching_section_p2[key];
+                }
+                (*individuos)[i + 1][j] = key;
+            }
         }
-
-        for (int j = 0; j < pontos_corte[0]; j++)
-        {
-            int key = (*individuos)[p1][j];
-            while (matching_section_p1.find(key) != matching_section_p1.end())
-            {
-                key = matching_section_p1[key];
-            }
-            (*individuos)[p1][j] = key;
-
-            key = (*individuos)[p2][j];
-            while (matching_section_p2.find(key) != matching_section_p2.end())
-            {
-                key = matching_section_p2[key];
-            }
-            (*individuos)[p2][j] = key;
-        }
-        for (int j = pontos_corte[1]; j < tamanho_cromossomo; j++)
-        {
-            int key = (*individuos)[p1][j];
-            while (matching_section_p1.find(key) != matching_section_p1.end())
-            {
-                key = matching_section_p1[key];
-            }
-            (*individuos)[p1][j] = key;
-
-            key = (*individuos)[p2][j];
-            while (matching_section_p2.find(key) != matching_section_p2.end())
-            {
-                key = matching_section_p2[key];
-            }
-            (*individuos)[p2][j] = key;
-        }
-        /*
-            print_cromossomo(p1);
-            print_cromossomo(p2);
-            printf("\n");
-            */
+        // printf("Depois:\n");
+        // printIndiv(i);
+        // printIndiv(i + 1);
     }
 }
 

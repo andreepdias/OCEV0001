@@ -86,13 +86,15 @@ void Populacao::selecao_torneio()
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     uniform_int_distribution<int> distribution_int(0, tamanho_populacao - 1);
 
-    vector<pair<double, int>> individuos_torneio(k);
-    map<int, bool> individuos_escolhidos;
-
-    int r;
-    double rr;
-
+    #pragma omp parallel
+    #pragma omp for schedule(dynamic)
     for (int x = 0; x < tamanho_populacao; x++){
+        vector<pair<double, int> > individuos_torneio(k);
+        map<int, bool> individuos_escolhidos;
+
+        int r;
+        double rr;
+
         individuos_escolhidos.clear();
         for (int i = 0; i < k; i++){
             do{
@@ -102,6 +104,7 @@ void Populacao::selecao_torneio()
             individuos_escolhidos[r] = true;
             individuos_torneio[i].first = (*fitness)[r];
             individuos_torneio[i].second = r;
+            // printf("Participando:\t%2d\t%lf\n", individuos_torneio[i].second, individuos_torneio[i].first);
         }
         sort(individuos_torneio.begin(), individuos_torneio.end());
 
@@ -112,6 +115,7 @@ void Populacao::selecao_torneio()
         }else{
             (*individuos_selecionados)[x] = individuos_torneio[0].second;
         }
+        // printf("Escolhendo:\t%d\n", (*individuos_selecionados)[x]);
     }
 }
 

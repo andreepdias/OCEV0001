@@ -68,11 +68,11 @@ vector<pair<string, double> > Dominio_Binario::calcula_variaveis_radios(int indi
 
 void Dominio_Inteiro_Permutado::NQueens()
 {
-    int colisoes;
-    int indice_pior = -1;
 
+    #pragma omp parallel 
+    #pragma omp for schedule(dynamic)
     for(int i = 0; i < tamanho_populacao; i++){ // percorre todas as soluções
-        colisoes = 0;
+        int colisoes = 0;
         for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
             int y = (*individuos)[i][j];
             int x = j;
@@ -110,7 +110,8 @@ void Dominio_Inteiro_Permutado::NQueens()
                 yb--;
             }
         }
-        (*fitness)[i] = (1 - (colisoes * 1.0) / tamanho_cromossomo);
+        // (*fitness)[i] = (1 - (colisoes * 1.0) / tamanho_cromossomo);
+        (*fitness)[i] = double(tamanho_cromossomo - colisoes) / tamanho_cromossomo;
     }
     
 }

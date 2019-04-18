@@ -8,18 +8,19 @@ void Dominio_Inteiro_Permutado::swap_mutation()
 {
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     uniform_int_distribution<int> distribution_int(0, tamanho_cromossomo - 1);
-    double r;
-    int g;
+
+    #pragma omp parallel
+    #pragma omp for schedule(dynamic)
     for(int i = 0; i < tamanho_populacao; i++){
-        // printf("i: %d\n", i);
+        double r;
+        int g;
+
         for(int j = 0; j < tamanho_cromossomo; j++){
-            // printf("j: %d\n", j);
             r = distribution_real(engine);
-            if(r <= probabilidade_mutacao){
+            if(r < probabilidade_mutacao){
                 do{
                     g = distribution_int(engine);
                 }while(g == j);
-                // printf("i: %d\tj: %d\n", i, j);
                 int aux = (*individuos)[i][j];
                 (*individuos)[i][j] = (*individuos)[i][g];
                 (*individuos)[i][g] = aux;

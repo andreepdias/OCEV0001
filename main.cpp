@@ -26,14 +26,27 @@ int main(int argc, char const *argv[])
     ofstream out;
     out.open("tempos");
 
-    for(int i = 0; i < parametros.GEN - 1; i++){
-         populacao.Fitness(i, out);
-         populacao.selecao();
-         populacao.crossover();
-         populacao.mutation();
+    for(int i = 0; i < parametros.GEN; i++){
+        // printf("----------------------------Iteracao %d----------------------------\n", i + 1);
+        populacao.Fitness(i, out);
+        // printf("--------------Fitness:--------------\n");
+        // populacao.print_populacao();
+
+        populacao.selecao();
+        // printf("--------------Selecao:--------------\n");
+        // populacao.print_selecionados();
+        // populacao.print_populacao();
+
+        populacao.crossover();
+        // printf("--------------Crossover:--------------\n");
+        // populacao.print_populacao();
+
+        populacao.mutation();
+        // printf("--------------Mutacao::--------------\n");
+        // populacao.print_populacao();
     }
-    populacao.Fitness(parametros.GEN - 1, out);
-    populacao.print_finalizacao_execucao();
+    populacao.Fitness(parametros.GEN, out);
+    // populacao.print_finalizacao_execucao();
 }
 
 

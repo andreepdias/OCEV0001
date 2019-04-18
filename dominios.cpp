@@ -9,6 +9,7 @@
 #include <functional>
 #include <map>
 #include <cfloat>
+#include <omp.h>
 
 
 using namespace std;
@@ -22,7 +23,7 @@ using namespace std;
 class Dominio_Binario{
 private:
     int tamanho_populacao, tamanho_cromossomo;
-    int probabilidade_crossover, probabilidade_mutacao;
+    double probabilidade_crossover, probabilidade_mutacao;
     vector<pair<double, double> > *limites;
     vector<vector<bool> > *individuos;
     vector<vector<bool> > *individuos_intermediarios;
@@ -35,7 +36,7 @@ private:
     random_device device{};
     mt19937 engine{device()};
 public:
-    Dominio_Binario(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<bool> > *_i, vector<vector<bool> > *_ii, vector<bool> *_m, vector<double> *_f, vector<int> *_is, int _pc, int _pm, vector<double> *_if, vector<double> *_fo){
+    Dominio_Binario(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<bool> > *_i, vector<vector<bool> > *_ii, vector<bool> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm, vector<double> *_if, vector<double> *_fo){
         fitness = _f;
         infracoes = _if;
         funcoes_objetivo = _fo;
@@ -74,7 +75,7 @@ public:
 class Dominio_Inteiro{
 private:
     int tamanho_populacao, tamanho_cromossomo;
-    int probabilidade_crossover, probabilidade_mutacao;
+    double probabilidade_crossover, probabilidade_mutacao;
     vector<pair<double, double> > *limites;
     vector<vector<int> > *individuos;
     vector<vector<int>> *individuos_intermediarios;
@@ -86,7 +87,7 @@ private:
     mt19937 engine{device()};
 
 public:
-    Dominio_Inteiro(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<int> > *_i, vector<vector<int> > *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, int _pc, int _pm){
+    Dominio_Inteiro(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<int> > *_i, vector<vector<int> > *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm){
         fitness = _f;
         tamanho_populacao = _tp;
         tamanho_cromossomo = _tc;
@@ -120,7 +121,7 @@ public:
 class Dominio_Inteiro_Permutado{
 private:
     int tamanho_populacao, tamanho_cromossomo;
-    int probabilidade_crossover, probabilidade_mutacao;
+    double probabilidade_crossover, probabilidade_mutacao;
     vector<pair<double, double>> *limites;
     vector<vector<int> > *individuos;
     vector<vector<int>> *individuos_intermediarios;
@@ -132,7 +133,7 @@ private:
     mt19937 engine{device()};
 
   public:
-    Dominio_Inteiro_Permutado(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<int>> *_i, vector<vector<int>> *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, int _pc, int _pm){
+    Dominio_Inteiro_Permutado(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<int>> *_i, vector<vector<int>> *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm){
         fitness = _f;
         tamanho_populacao = _tp;
         tamanho_cromossomo = _tc;
@@ -170,7 +171,7 @@ private:
 class Dominio_Real{
 private:
     int tamanho_populacao, tamanho_cromossomo;
-    int probabilidade_crossover, probabilidade_mutacao;
+    double probabilidade_crossover, probabilidade_mutacao;
     vector<pair<double, double> > *limites;
     vector<vector<double> > *individuos;
     vector<vector<double>> *individuos_intermediarios;
@@ -181,7 +182,7 @@ private:
     random_device device{};
     mt19937 engine{device()};
 public:
-    Dominio_Real(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<double> > *_i, vector<vector<double> > *_ii, vector<double> *_m, vector<double> *_f, vector<int> *_is, int _pc, int _pm){
+    Dominio_Real(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<double> > *_i, vector<vector<double> > *_ii, vector<double> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm){
         fitness = _f;
         tamanho_populacao = _tp;
         tamanho_cromossomo = _tc;
