@@ -85,6 +85,7 @@ void Populacao::selecao_torneio()
 {
     uniform_real_distribution<double> distribution_real{0.0, 1.0};
     uniform_int_distribution<int> distribution_int(0, tamanho_populacao - 1);
+    uniform_int_distribution<int> distribution_int_k(1, k - 1);
 
     #pragma omp parallel
     #pragma omp for schedule(dynamic)
@@ -113,7 +114,8 @@ void Populacao::selecao_torneio()
         if (kp >= rr){
             (*individuos_selecionados)[x] = individuos_torneio[k - 1].second;
         }else{
-            (*individuos_selecionados)[x] = individuos_torneio[0].second;
+            r = distribution_int_k(engine);
+            (*individuos_selecionados)[x] = individuos_torneio[r].second;
         }
         // printf("Escolhendo:\t%d\n", (*individuos_selecionados)[x]);
     }

@@ -226,10 +226,8 @@ public:
             melhor = max(melhor, melhor_individuo_fitness);
         }
         printf("%d %lf %lf %lf\n", k, melhor, pior, media);
-        int x = 0;
-        if(k % 10 == 0){
-            out << (k / 10) << " " << melhor << " " << pior << " " << media << endl;
-        }
+
+        out << k << " " << melhor << " " << pior << " " << media << endl;
         
     }
 
