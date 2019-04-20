@@ -32,9 +32,7 @@ int main(int argc, char const *argv[])
     Populacao populacao(parametros);
 
     for(int k = 0; k < parametros.RUN; k++){
-        string s = "tempos";
-        s +=  "_";
-        s += to_string(k + 1);
+        string s = "tempos_" + to_string(k + 1);
         out[k].open(s.c_str());
         out[parametros.RUN].open("tempos");
 
@@ -116,9 +114,7 @@ void grafico_convergencia(Parametros &parametros){
     ofstream out;
 
     for(int i = 0; i < parametros.RUN; i++){
-        string s = "tempos";
-        s += "_";
-        s += to_string(i + 1);
+        string s = "tempos_" + to_string(i + 1);
         in[i].open(s.c_str());
     }
     out.open("tempos");

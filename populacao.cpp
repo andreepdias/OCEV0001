@@ -113,11 +113,10 @@ public:
 
         if(draw){
             posicao_infracao = new vector<vector<bool> >();
-            (*posicao_infracao).resize(tamanho_populacao, vector<bool>(tamanho_cromossomo));
+            (*posicao_infracao).resize(tamanho_populacao + 1, vector<bool>(tamanho_cromossomo));
         
         }
 
-        vector<vector<int> > tab_int(tamanho_cromossomo, vector<int> (tamanho_cromossomo));
         if(problema == 3){
             tabuleiro_lucro = new pair<double, vector<vector<double> > >();
             (*tabuleiro_lucro).second.resize(tamanho_cromossomo, vector<double> (tamanho_cromossomo));
@@ -125,7 +124,6 @@ public:
             for(int i = 0; i < tamanho_cromossomo; i++){
                 for(int j = 0; j < tamanho_cromossomo; j++){
                     k++;
-                    tab_int[i][j] = k;
                     if(i % 2 == 0){
                         kk = sqrt(k);
                     }else{
@@ -198,7 +196,7 @@ public:
         melhor_individuo_infracoes = 0;
     }
 
-    void drawQueens(sf::RenderWindow &window, int indice_melhor){
+    void drawQueens(sf::RenderWindow &window, int indice){
         sf::RectangleShape blank(sf::Vector2f(WINDOW_SIZE, WINDOW_SIZE));
         sf::RectangleShape item(sf::Vector2f(WINDOW_SIZE / (double) tamanho_cromossomo, WINDOW_SIZE / (double) tamanho_cromossomo));
         sf::RectangleShape lh (sf::Vector2f(WINDOW_SIZE * tamanho_cromossomo, 1));
@@ -212,7 +210,7 @@ public:
             int y = i;
             int x = (*melhor_individuo_inteiro_permutado)[i];
 
-            if((*posicao_infracao)[indice_melhor][i]){
+            if((*posicao_infracao)[tamanho_cromossomo][i]){
                 item.setFillColor(sf::Color(255, 0, 0));
             }else{
                 item.setFillColor(sf::Color(0, 255, 0));
@@ -259,6 +257,10 @@ public:
             }
         }
         media /= tamanho_populacao;
+        
+        if (draw){
+            (*posicao_infracao)[tamanho_cromossomo] = (*posicao_infracao)[indice_melhor];
+        }
 
         if(elitismo){
             /* TROCA PIOR ÍNDIVIDUO PELO MELHOR DA GERAÇÃO ANTERIOR */        
@@ -299,7 +301,11 @@ public:
                 indice_melhor = indice_pior;
             }
             melhor_individuo_indice = indice_melhor;
+
+
         }
+
+        melhor = max(melhor, melhor_individuo_fitness);
         printf("%4d %.20lf %lf %lf\tfit: %lf\tfo: %lf\tinf: %.0lf\n", k, melhor, pior, media, melhor_individuo_fitness, melhor_individuo_fo, melhor_individuo_infracoes);
 
         if(k % intervalo_plot == 0){

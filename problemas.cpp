@@ -79,6 +79,7 @@ void Dominio_Inteiro_Permutado::NQueens()
             int x = j;
             int yc = y + 1;
             int yb = y - 1;
+            bool colidiu = false;
             for(int xx1 = x + 1, xx2 = x - 1; xx1 < tamanho_cromossomo or xx2 >= 0; xx1++, xx2--){ // compara todas as rainhas com uma das rainhas
                 int q1, q2;
 
@@ -98,17 +99,24 @@ void Dominio_Inteiro_Permutado::NQueens()
                 if(yc < tamanho_cromossomo){
                     if(yc == q1 or yc == q2){
                         colisoes++;
+                        colidiu = true;
                         break;
                     }
                 }
                 if(yb >= 0){
                     if(yb == q1 or yb == q2){
                         colisoes++;
+                        colidiu = true;
                         break;
                     }
                 }
                 yc++;
                 yb--;
+            }
+            if(!colidiu){
+                 if(draw) (*posicao_infracao)[i][j] = false; 
+            }else{
+                 if(draw) (*posicao_infracao)[i][j] = true;
             }
         }
         // (*fitness)[i] = (1 - (colisoes * 1.0) / tamanho_cromossomo);
@@ -171,7 +179,7 @@ void Dominio_Inteiro_Permutado::NQueensProfit()
                 fo += double((*tabuleiro_lucro).second[j][y]);
                  if(draw) (*posicao_infracao)[i][j] = false; 
             }else{
-                 if(draw) (*posicao_infracao)[i][j] = true; 
+                 if(draw) (*posicao_infracao)[i][j] = true;
             }
         }
         (*funcoes_objetivo)[i] = fo;
