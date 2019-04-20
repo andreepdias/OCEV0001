@@ -5,6 +5,8 @@
 
 using namespace std;
 
+void relatorio_fim_execucoes(Parametros &parametros, vector<Relatorio> &relatorios);
+void grafico_convergencia(Parametros &parametros);
 
 int main(int argc, char const *argv[])
 {
@@ -19,38 +21,126 @@ int main(int argc, char const *argv[])
         cout << r << endl;
         return 1;
     }
+     sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "NQueens"); 
+     if(!parametros.DRAW){
+         window.close();
+     }
+     
+    ofstream out[parametros.RUN + 1];   
 
+    vector<Relatorio> relatorios(parametros.RUN);
     Populacao populacao(parametros);
-    populacao.gerar_populacao_inicial();
 
-    ofstream out;
-    out.open("tempos");
+    for(int k = 0; k < parametros.RUN; k++){
+        string s = "tempos";
+        s +=  "_";
+        s += to_string(k + 1);
+        out[k].open(s.c_str());
+        out[parametros.RUN].open("tempos");
 
-    for(int i = 0; i < parametros.GEN; i++){
-        // printf("----------------------------Iteracao %d----------------------------\n", i + 1);
-        populacao.Fitness(i, out);
-        // printf("--------------Fitness:--------------\n");
-        // populacao.print_populacao();
+        populacao.gerar_populacao_inicial();
+        for(int i = 0; i < parametros.GEN; i++){
+            populacao.Fitness(i, out, k, window); 
+            populacao.selecao();
+            populacao.crossover();
+            populacao.mutation();
+        }
+        populacao.Fitness(parametros.GEN, out, k, window);
 
-        populacao.selecao();
-        // printf("--------------Selecao:--------------\n");
-        // populacao.print_selecionados();
-        // populacao.print_populacao();
-
-        populacao.crossover();
-        // printf("--------------Crossover:--------------\n");
-        // populacao.print_populacao();
-
-        populacao.mutation();
-        // printf("--------------Mutacao::--------------\n");
-        // populacao.print_populacao();
+        relatorios[k] = populacao.relatorio_execucao();
+        
+        out[k].close();
+        out[parametros.RUN].close();
     }
-    populacao.Fitness(parametros.GEN, out);
-    // populacao.print_finalizacao_execucao();
+
+    grafico_convergencia(parametros);
+    relatorio_fim_execucoes(parametros, relatorios);
+
+    if(parametros.DRAW){
+        bool pressed = false;
+        while(pressed == false){
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+                pressed = true;
+            }
+        }
+        window.close();
+    }
 }
 
+void relatorio_fim_execucoes(Parametros &parametros, vector<Relatorio> &relatorios){
+    double media = 0;
+    double desvio = 0;
+    double melhor_fo = -1.0;
+    int indice_melhor_fo = -1;
+    for (int i = 0; i < parametros.RUN; i++)
+    {
+        printf("Execucao %d:\n", i + 1);
+        printf("\tMelhor solucao encontada:\n");
+        printf("\t\tFuncao Objetivo: %lf\n", relatorios[i].funcao_objetivo);
+        printf("\t\tInfracoes: %lf\n", relatorios[i].infracao_restricoes);
+        media += relatorios[i].funcao_objetivo;
 
-// melhor, pior, média
+        if (relatorios[i].funcao_objetivo > melhor_fo)
+        {
+            indice_melhor_fo = i;
+            melhor_fo = relatorios[i].funcao_objetivo;
+        }
+    }
+    media /= parametros.RUN;
 
+    for (int i = 0; i < parametros.RUN; i++)
+    {
+        desvio += pow(media - relatorios[i].funcao_objetivo, 2);
+    }
+    desvio /= parametros.RUN;
+    desvio = sqrt(desvio);
+
+    printf("\nFinal das execucoes:\n");
+    printf("\tFuncao Objetivo:\n");
+    printf("\t\tMedia:\t%lf\n", media);
+    printf("\t\tDesvio Padrao:\t%lf\n", desvio);
+    printf("\n\tMelhor solucao: execucao %d\n", indice_melhor_fo + 1);
+    printf("\n\t\tFuncao Objetivo: %lf\n", relatorios[indice_melhor_fo].funcao_objetivo);
+    printf("\t\tInfracoes: %lf\n", relatorios[indice_melhor_fo].infracao_restricoes);
+    printf("\n\t\tVariaveis:\n");
+    for (int i = 0; i < relatorios[indice_melhor_fo].variaveis.size(); i++)
+    {
+        cout << "\t\t" << relatorios[indice_melhor_fo].variaveis[i].first << ":\t";
+        printf("%4.0lf\n", relatorios[indice_melhor_fo].variaveis[i].second);
+    }
+}
+
+void grafico_convergencia(Parametros &parametros){
+
+    ifstream in[parametros.RUN];
+    ofstream out;
+
+    for(int i = 0; i < parametros.RUN; i++){
+        string s = "tempos";
+        s += "_";
+        s += to_string(i + 1);
+        in[i].open(s.c_str());
+    }
+    out.open("tempos");
+
+    int geracao;
+    double melhor, pior, media;
+    double m_melhor, m_pior, m_media;
+
+    for(int i = 0; i < parametros.GEN / parametros.PLOT_INTERVAL; i++){
+        m_melhor = 0.0, m_pior = 0.0, m_media = 0.0;
+        for(int k = 0; k < parametros.RUN; k++){
+            in[k] >> geracao >> melhor >> pior >> media;
+            m_melhor += melhor;
+            m_pior += pior;
+            m_media += media;
+        }
+        m_melhor /= parametros.RUN;
+        m_pior /= parametros.RUN;
+        m_media /= parametros.RUN;
+        out << geracao << " " << m_melhor << " " << m_pior << " " << m_media << endl;
+    }
+
+}
 
 #endif

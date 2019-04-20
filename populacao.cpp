@@ -1,21 +1,14 @@
 #ifndef __POPULACAO_CPP
 #define __POPULACAO_CPP
 
-/*
-elitismo
-parametros
-nradios
-queens
-grafico
-*/
-
 #include "dominios.cpp"
 #include "parametros.cpp"
+#include "relatorio.cpp"
 using namespace std;
 
 
 class Populacao{
-private:
+public:
     int tipo_variavel;
     int tipo_selecao;
     int tipo_crossover;
@@ -27,11 +20,16 @@ private:
     bool elitismo;
     int problema;
 
-
     int k; double kp;
     int t, d;
     
     int c;
+
+    int draw;
+
+    int execucoes;
+
+    int intervalo_plot;
 
     vector<pair<double, double> > *limites;
 
@@ -50,18 +48,24 @@ private:
     vector<int> *melhor_individuo_inteiro_permutado = NULL;
     vector<double> *melhor_individuo_real = NULL;
     
+    vector<int> *individuos_selecionados;
+
     vector<double> *infracoes;
     vector<double> *funcoes_objetivo;
+    vector<double> *fitness;
 
+    int melhor_individuo_indice;
     double melhor_individuo_fitness;
+    double melhor_individuo_fo;
+    double melhor_individuo_infracoes;
 
     Dominio_Binario *db = NULL;
     Dominio_Inteiro_Permutado *dp = NULL;
     Dominio_Inteiro *di = NULL;
     Dominio_Real *dr = NULL;
 
-    vector<double> *fitness;
-    vector<int> *individuos_selecionados;
+    vector<vector<bool> > *posicao_infracao;
+    pair<double, vector<vector<double> > > *tabuleiro_lucro;
 
     random_device device{};
     mt19937 engine{device()};
@@ -88,8 +92,12 @@ public:
         t = p.t;
         d = p.d;
         c = p.c;
+        
+        draw = p.DRAW;
 
-        printf("PC: %lf\n", probabilidade_crossover);
+        execucoes = p.RUN;
+
+        intervalo_plot = p.PLOT_INTERVAL;
 
         fitness = new vector<double>();
         (*fitness).resize(tamanho_populacao);
@@ -103,6 +111,40 @@ public:
         funcoes_objetivo = new vector<double>();
         (*funcoes_objetivo).resize(tamanho_populacao);
 
+        if(draw){
+            posicao_infracao = new vector<vector<bool> >();
+            (*posicao_infracao).resize(tamanho_populacao, vector<bool>(tamanho_cromossomo));
+        
+        }
+
+        vector<vector<int> > tab_int(tamanho_cromossomo, vector<int> (tamanho_cromossomo));
+        if(problema == 3){
+            tabuleiro_lucro = new pair<double, vector<vector<double> > >();
+            (*tabuleiro_lucro).second.resize(tamanho_cromossomo, vector<double> (tamanho_cromossomo));
+            double k = 0, kk;
+            for(int i = 0; i < tamanho_cromossomo; i++){
+                for(int j = 0; j < tamanho_cromossomo; j++){
+                    k++;
+                    tab_int[i][j] = k;
+                    if(i % 2 == 0){
+                        kk = sqrt(k);
+                    }else{
+                        kk = log10(k);
+                    }
+                    (*tabuleiro_lucro).second[i][j] = kk;
+                }
+            }
+            k = 0;
+            for(int i = tamanho_cromossomo - 2, j = tamanho_cromossomo - 1; i >= 0 and j >= tamanho_cromossomo / 2; i -= 2, j--){
+                k += (*tabuleiro_lucro).second[i][j];
+            }
+            for(int i = tamanho_cromossomo - 1, j = tamanho_cromossomo - 1; i >= 0 and j >= tamanho_cromossomo / 2; i -= 2, j--){
+                k += (*tabuleiro_lucro).second[i][j];
+            }
+            (*tabuleiro_lucro).first = k;
+            cout << (*tabuleiro_lucro).first << endl;
+        }
+
         switch (tipo_variavel){
         case BINARIO:
             melhor_individuo_binario = new vector<bool>();
@@ -114,19 +156,19 @@ public:
             melhor_individuo_inteiro = new vector<int>();
             individuos_inteiro = new vector<vector<int> >();
             individuos_intermediarios_inteiro = new vector<vector<int> >();
-            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, individuos_intermediarios_inteiro, melhor_individuo_inteiro, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao);
+            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, individuos_intermediarios_inteiro, melhor_individuo_inteiro, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo);
             break;
         case INTEIRO_PERMUTADO:
             melhor_individuo_inteiro_permutado = new vector<int>();
             individuos_inteiro_permutado = new vector<vector<int> >();
             individuos_intermediarios_inteiro_permutado = new vector<vector<int> >();
-            dp = new Dominio_Inteiro_Permutado(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro_permutado, individuos_intermediarios_inteiro_permutado, melhor_individuo_inteiro_permutado, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao);
+            dp = new Dominio_Inteiro_Permutado(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro_permutado, individuos_intermediarios_inteiro_permutado, melhor_individuo_inteiro_permutado, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, tabuleiro_lucro, infracoes, funcoes_objetivo, posicao_infracao, draw);
             break;
         case REAL:
             melhor_individuo_real = new vector<double>();
             individuos_real = new vector<vector<double> >();
             individuos_intermediarios_real = new vector<vector<double> >();
-            dr = new Dominio_Real(tamanho_populacao, tamanho_cromossomo, limites, individuos_real, individuos_intermediarios_real, melhor_individuo_real, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao);
+            dr = new Dominio_Real(tamanho_populacao, tamanho_cromossomo, limites, individuos_real, individuos_intermediarios_real, melhor_individuo_real, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo);
             break;
         }
     }
@@ -136,39 +178,68 @@ public:
             case BINARIO:
                 (*db).gerar_populacao_inicial();
                 (*melhor_individuo_binario) = (*individuos_binario)[0];
-                melhor_individuo_fitness = 0;
                 break;
             case INTEIRO:
                 (*di).gerar_populacao_inicial();
                 (*melhor_individuo_inteiro) = (*individuos_inteiro)[0];
-                melhor_individuo_fitness = 0;
                 break;
             case INTEIRO_PERMUTADO:
                 (*dp).gerar_populacao_inicial();
                 (*melhor_individuo_inteiro_permutado) = (*individuos_inteiro_permutado)[0];
-                melhor_individuo_fitness = 0;
                 break;
             case REAL:
                 (*dr).gerar_populacao_inicial();
                 (*melhor_individuo_real) = (*individuos_real)[0];
-                melhor_individuo_fitness = 0;
                 break;
         }
+        melhor_individuo_fitness = 0;
+        melhor_individuo_indice = 0;
+        melhor_individuo_fo = 0;
+        melhor_individuo_infracoes = 0;
     }
 
-    void Fitness(int k, ofstream &out){
+    void drawQueens(sf::RenderWindow &window, int indice_melhor){
+        sf::RectangleShape blank(sf::Vector2f(WINDOW_SIZE, WINDOW_SIZE));
+        sf::RectangleShape item(sf::Vector2f(WINDOW_SIZE / (double) tamanho_cromossomo, WINDOW_SIZE / (double) tamanho_cromossomo));
+        sf::RectangleShape lh (sf::Vector2f(WINDOW_SIZE * tamanho_cromossomo, 1));
+        sf::RectangleShape lv(sf::Vector2f(1, WINDOW_SIZE));
+        
+        blank.setFillColor(sf::Color(255, 255, 255));
+        blank.setPosition(0, 0);
+        window.draw(blank);
+
+        for(int i = 0; i < tamanho_cromossomo; i++){
+            int y = i;
+            int x = (*melhor_individuo_inteiro_permutado)[i];
+
+            if((*posicao_infracao)[indice_melhor][i]){
+                item.setFillColor(sf::Color(255, 0, 0));
+            }else{
+                item.setFillColor(sf::Color(0, 255, 0));
+            }
+
+            item.setPosition(WINDOW_SIZE * x / (double)tamanho_cromossomo, WINDOW_SIZE * y / (double) tamanho_cromossomo);
+            window.draw(item);
+
+            lv.setFillColor(sf::Color(175, 175, 175));
+            lv.setPosition(WINDOW_SIZE * i / (double)tamanho_cromossomo, 0);
+            window.draw(lv);
+
+            lh.setFillColor(sf::Color(175, 175, 175));
+            lh.setPosition(0, WINDOW_SIZE * i / (double)tamanho_cromossomo);
+            window.draw(lh);
+        }
+        window.display();
+    }
+
+    void Fitness(int k, ofstream out[], int gen, sf::RenderWindow &window){
         if(problema == 1){
             (*dp).NQueens();
         }else if(problema == 2){
             (*db).radiosSTLX();
+        }else if(problema == 3){
+            (*dp).NQueensProfit();
         }
-        /*
-        else if(problema == "FuncaoCOS"){
-            (*db).funcaoCOS();
-        }else if(problema == "RadiosSTLX"){
-            (*db).radiosSTLX();
-        }
-        */
 
         double pior, melhor, media;
         int indice_melhor, indice_pior;
@@ -208,6 +279,8 @@ public:
             /* MEMORIZA MELHOR INDIVIDUO DESSA GERAÇÃO */
             if(melhor >= melhor_individuo_fitness){
                 melhor_individuo_fitness = melhor;
+                melhor_individuo_fo = (*funcoes_objetivo)[indice_melhor];
+                melhor_individuo_infracoes = (*infracoes)[indice_melhor];
                 switch(tipo_variavel){
                     case BINARIO:
                         (*melhor_individuo_binario) = (*individuos_binario)[indice_melhor];
@@ -222,13 +295,27 @@ public:
                         (*melhor_individuo_real) = (*individuos_real)[indice_melhor];
                         break;
                 }
+            }else{
+                indice_melhor = indice_pior;
             }
-            melhor = max(melhor, melhor_individuo_fitness);
+            melhor_individuo_indice = indice_melhor;
         }
-        printf("%d %lf %lf %lf\n", k, melhor, pior, media);
+        printf("%4d %.20lf %lf %lf\tfit: %lf\tfo: %lf\tinf: %.0lf\n", k, melhor, pior, media, melhor_individuo_fitness, melhor_individuo_fo, melhor_individuo_infracoes);
 
-        out << k << " " << melhor << " " << pior << " " << media << endl;
-        
+        if(k % intervalo_plot == 0){
+            out[gen] << k << " " << melhor << " " << pior << " " << media << endl;
+            out[execucoes] << k << " " << melhor << " " << pior << " " << media << endl;
+            
+            if(draw){
+                sf::Event event;
+                while (window.pollEvent(event))
+                {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+                }
+                drawQueens(window, indice_melhor);
+            }
+        }
     }
 
 
@@ -248,7 +335,7 @@ public:
                     (*individuos_intermediarios_binario)[i] = (*individuos_binario)[s]; break;
                 case INTEIRO:
                     (*individuos_intermediarios_inteiro)[i] = (*individuos_inteiro)[s]; break;
-                case INTEIRO_PERMUTADO:
+                   case INTEIRO_PERMUTADO:
                     (*individuos_intermediarios_inteiro_permutado)[i] = (*individuos_inteiro_permutado)[s]; break;
                 case REAL:
                     (*individuos_intermediarios_real)[i] = (*individuos_real)[s]; break;
@@ -298,17 +385,22 @@ public:
         }
     }
 
-    void print_finalizacao_execucao(){
-        double melhor = -0.1;
-        int indice_melhor;
-        for(int i = 0; i < tamanho_populacao; i++){
-            if((*fitness)[i] > melhor){
-                melhor = (*fitness)[i];
-                indice_melhor = i;
-            }
+    Relatorio relatorio_execucao(){
+        vector <pair<string, double> >  variaveis;
+        switch(problema){
+            case 1:
+                variaveis = (*dp).calcula_variaveis_nqueens(melhor_individuo_indice); break;
+            case 2:
+                variaveis = (*db).calcula_variaveis_radios(melhor_individuo_indice); break;
+            case 3:
+                variaveis = (*dp).calcula_variaveis_nqueens(melhor_individuo_indice); break;
         }
-        vector<pair<string, double> > variaveis = (*db).calcula_variaveis_radios(indice_melhor);
-        printf("Melhor individuo:\n\tFitness: %lf\n\tFuncao Objetivo: %lf\n\tPenalizacao: %lf\n", (*fitness)[indice_melhor], (*funcoes_objetivo)[indice_melhor], (*infracoes)[indice_melhor]);
+        Relatorio r(
+            (*fitness)[melhor_individuo_indice], 
+            (*funcoes_objetivo)[melhor_individuo_indice], 
+            (*infracoes)[melhor_individuo_indice], 
+            variaveis);
+        return r;
     }
     void print_populacao(){
         printf("Populacao:\n");

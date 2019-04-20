@@ -73,6 +73,7 @@ void Dominio_Inteiro_Permutado::NQueens()
     #pragma omp for schedule(dynamic)
     for(int i = 0; i < tamanho_populacao; i++){ // percorre todas as soluções
         int colisoes = 0;
+        double fo = 0;
         for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
             int y = (*individuos)[i][j];
             int x = j;
@@ -111,9 +112,83 @@ void Dominio_Inteiro_Permutado::NQueens()
             }
         }
         // (*fitness)[i] = (1 - (colisoes * 1.0) / tamanho_cromossomo);
-        (*fitness)[i] = double(tamanho_cromossomo - colisoes) / tamanho_cromossomo;
+        fo = tamanho_cromossomo - colisoes;
+        (*funcoes_objetivo)[i] = fo;
+        (*infracoes)[i] = colisoes;
+        (*fitness)[i] = fo / tamanho_cromossomo;
     }
-    
+}
+
+void Dominio_Inteiro_Permutado::NQueensProfit()
+{
+
+    #pragma omp parallel 
+    #pragma omp for schedule(dynamic)
+    for(int i = 0; i < tamanho_populacao; i++){ // percorre todas as soluções
+        int colisoes = 0;
+        double fo = 0;
+        for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
+            int y = (*individuos)[i][j];
+            int x = j;
+            int yc = y + 1;
+            int yb = y - 1;
+            bool colidiu = false;
+            for(int xx1 = x + 1, xx2 = x - 1; xx1 < tamanho_cromossomo or xx2 >= 0; xx1++, xx2--){ // compara todas as rainhas com uma das rainhas
+                int q1, q2;
+
+                if (xx1 < tamanho_cromossomo)
+                {
+                    q1 = (*individuos)[i][xx1];
+                }else{
+                    q1 = -1;
+                }
+                
+                if(xx2 >= 0){
+                    q2 = (*individuos)[i][xx2];
+                }else{
+                    q2 = -1;
+                }
+
+                if(yc < tamanho_cromossomo){
+                    if(yc == q1 or yc == q2){
+                        colisoes++;
+                        colidiu = true;
+                        break;
+                    }
+                }
+                if(yb >= 0){
+                    if(yb == q1 or yb == q2){
+                        colisoes++;
+                        colidiu = true;
+                        break;
+                    }
+                }
+                yc++;
+                yb--;
+
+            }
+            if(!colidiu){
+                fo += double((*tabuleiro_lucro).second[j][y]);
+                 if(draw) (*posicao_infracao)[i][j] = false; 
+            }else{
+                 if(draw) (*posicao_infracao)[i][j] = true; 
+            }
+        }
+        (*funcoes_objetivo)[i] = fo;
+        (*infracoes)[i] = colisoes;
+        (*fitness)[i] = fo / (*tabuleiro_lucro).first;
+    }
+}
+
+
+vector <pair<string, double> >  Dominio_Inteiro_Permutado::calcula_variaveis_nqueens(int indice ){
+    vector <pair<string, double> > variaveis(tamanho_cromossomo);
+
+    for(int i = 0; i < tamanho_cromossomo; i++){
+        variaveis[i].second = double((*individuos)[indice][i] + 1);
+        variaveis[i].first = to_string(i + 1);
+    }
+    return variaveis;
 }
 
 #endif

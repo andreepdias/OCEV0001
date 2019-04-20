@@ -10,7 +10,8 @@
 #include <map>
 #include <cfloat>
 #include <omp.h>
-
+#include <SFML/Graphics.hpp>
+#define WINDOW_SIZE 1000
 
 using namespace std;
 
@@ -81,14 +82,18 @@ private:
     vector<vector<int>> *individuos_intermediarios;
     vector<int> *melhor_individuo;
     vector<double> *fitness;
+    vector<double> *infracoes;
+    vector<double> *funcoes_objetivo;
     vector<int> *individuos_selecionados;
 
     random_device device{};
     mt19937 engine{device()};
 
 public:
-    Dominio_Inteiro(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<int> > *_i, vector<vector<int> > *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm){
+    Dominio_Inteiro(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<int> > *_i, vector<vector<int> > *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm, vector<double> *_if, vector<double> *_fo){
         fitness = _f;
+        infracoes = _if;
+        funcoes_objetivo = _fo;
         tamanho_populacao = _tp;
         tamanho_cromossomo = _tc;
         limites = _l;
@@ -120,32 +125,43 @@ public:
 
 class Dominio_Inteiro_Permutado{
 private:
-    int tamanho_populacao, tamanho_cromossomo;
+    int tamanho_populacao, tamanho_cromossomo, draw;
     double probabilidade_crossover, probabilidade_mutacao;
     vector<pair<double, double>> *limites;
     vector<vector<int> > *individuos;
     vector<vector<int>> *individuos_intermediarios;
     vector<int> *melhor_individuo;
     vector<double> *fitness;
+    vector<double> *infracoes;
+    vector<double> *funcoes_objetivo;
     vector<int> *individuos_selecionados;
+
+    pair<double, vector<vector<double> > > *tabuleiro_lucro;
+    vector<vector<bool> > *posicao_infracao;
 
     random_device device{};
     mt19937 engine{device()};
 
   public:
-    Dominio_Inteiro_Permutado(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<int>> *_i, vector<vector<int>> *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm){
-        fitness = _f;
-        tamanho_populacao = _tp;
-        tamanho_cromossomo = _tc;
-        limites = _l;
-        individuos = _i;
-        melhor_individuo = _m;
-        individuos_intermediarios = _ii;
-        probabilidade_crossover = _pc;
-        probabilidade_mutacao = _pm;
-        (*melhor_individuo).resize(tamanho_cromossomo);
-        (*individuos).resize(tamanho_populacao, vector<int>(tamanho_cromossomo));
-        (*individuos_intermediarios).resize(tamanho_populacao, vector<int>(tamanho_cromossomo));
+      Dominio_Inteiro_Permutado(int _tp, int _tc, vector<pair<double, double>> *_l, vector<vector<int>> *_i, vector<vector<int>> *_ii, vector<int> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm, pair<double, vector<vector<double> > > *_tl, vector<double> *_if, vector<double> *_fo, vector<vector<bool> > *_pi, int _d)
+      {
+          fitness = _f;
+          infracoes = _if;
+          funcoes_objetivo = _fo;
+          tamanho_populacao = _tp;
+          tamanho_cromossomo = _tc;
+          limites = _l;
+          individuos = _i;
+          melhor_individuo = _m;
+          individuos_intermediarios = _ii;
+          probabilidade_crossover = _pc;
+          probabilidade_mutacao = _pm;
+          tabuleiro_lucro = _tl;
+          posicao_infracao = _pi;
+          draw = _d;
+          (*melhor_individuo).resize(tamanho_cromossomo);
+          (*individuos).resize(tamanho_populacao, vector<int>(tamanho_cromossomo));
+          (*individuos_intermediarios).resize(tamanho_populacao, vector<int>(tamanho_cromossomo));
     }
 
     void gerar_populacao_inicial(){
@@ -162,10 +178,13 @@ private:
     }
 
     void NQueens();
+    void NQueensProfit();
 
     void crossover_pmx_intp();
 
     void swap_mutation();
+
+    vector<pair<string, double> > calcula_variaveis_nqueens(int indice);
 };
 
 class Dominio_Real{
@@ -177,13 +196,17 @@ private:
     vector<vector<double>> *individuos_intermediarios;
     vector<double> *melhor_individuo;
     vector<double> *fitness;
+    vector<double> *infracoes;
+    vector<double> *funcoes_objetivo;
     vector<int> *individuos_selecionados;
 
     random_device device{};
     mt19937 engine{device()};
 public:
-    Dominio_Real(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<double> > *_i, vector<vector<double> > *_ii, vector<double> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm){
+    Dominio_Real(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<double> > *_i, vector<vector<double> > *_ii, vector<double> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm, vector<double> *_if, vector<double> *_fo){
         fitness = _f;
+        infracoes = _if;
+        funcoes_objetivo = _fo;
         tamanho_populacao = _tp;
         tamanho_cromossomo = _tc;
         limites = _l;

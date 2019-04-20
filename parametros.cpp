@@ -28,6 +28,10 @@ public:
 
     int PROBLEM;
 
+    int DRAW = 0;
+
+    int PLOT_INTERVAL;
+
     string carregar_parametros(string arquivo){
 
         ifstream arquivo_parametros;
@@ -187,11 +191,28 @@ public:
                 printf("Problema:\n");
                 if(v == "NQUEENS"){
                     PROBLEM = 1;
-                    printf("NQueens\n");
+                    printf("\tNQueens\n");
                 }else if(v == "RADIOS"){
                     PROBLEM = 2;
-                    printf("Radios\n");
+                    printf("\tRadios\n");
+                }else if(v == "NQUEENSPROFIT"){
+                    PROBLEM = 3;
+                    printf("\tNQueensProfit\n");
+                }else{
+                    retorno += "Problema nao encontrado.\n";
                 }
+            }else if(k == "DRAW"){
+                printf("Draw:\n");
+                if(v == "1"){
+                    DRAW = 1;
+                }else{
+                    DRAW = 0;
+                }
+                printf("\t%d\n", DRAW);
+            }else if(k == "PLOT-INTERVAL"){
+                printf("Plot-Interval:\n");
+                PLOT_INTERVAL = stoi(v);
+                printf("\t%d\n", PLOT_INTERVAL);
             }
         }
         return retorno;
