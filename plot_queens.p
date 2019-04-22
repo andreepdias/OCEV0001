@@ -1,6 +1,6 @@
 set xlabel "Generation" font "Helvetica, 12"
 set ylabel "Fitness" font "Helvetica, 12"
-set title "Genetic Algorithm\nNQueens 512 x 512" font "Helvetica, 15"
+set title "Genetic Algorithm\nNQueens" font "Helvetica, 15"
 set xrange [0:2000]
 set yrange [0:1.00]
 set grid

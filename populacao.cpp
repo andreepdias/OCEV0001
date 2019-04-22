@@ -196,6 +196,7 @@ public:
         melhor_individuo_infracoes = 0;
     }
 
+    /*
     void drawQueens(sf::RenderWindow &window, int indice){
         sf::RectangleShape blank(sf::Vector2f(WINDOW_SIZE, WINDOW_SIZE));
         sf::RectangleShape item(sf::Vector2f(WINDOW_SIZE / (double) tamanho_cromossomo, WINDOW_SIZE / (double) tamanho_cromossomo));
@@ -229,8 +230,10 @@ public:
         }
         window.display();
     }
+    */
 
-    void Fitness(int k, ofstream out[], int gen, sf::RenderWindow &window){
+    // void Fitness(int k, ofstream out[], int gen, sf::RenderWindow &window){
+    void Fitness(int k, ofstream out[], int gen){
         if(problema == 1){
             (*dp).NQueens();
         }else if(problema == 2){
@@ -306,12 +309,12 @@ public:
         }
 
         melhor = max(melhor, melhor_individuo_fitness);
-        printf("%4d %.20lf %lf %lf\tfit: %lf\tfo: %lf\tinf: %.0lf\n", k, melhor, pior, media, melhor_individuo_fitness, melhor_individuo_fo, melhor_individuo_infracoes);
 
         if(k % intervalo_plot == 0){
             out[gen] << k << " " << melhor << " " << pior << " " << media << endl;
             out[execucoes] << k << " " << melhor << " " << pior << " " << media << endl;
             
+            /*
             if(draw){
                 sf::Event event;
                 while (window.pollEvent(event))
@@ -321,6 +324,7 @@ public:
                 }
                 drawQueens(window, indice_melhor);
             }
+            */
         }
     }
 

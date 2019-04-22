@@ -10,7 +10,7 @@
 #include <map>
 #include <cfloat>
 #include <omp.h>
-#include <SFML/Graphics.hpp>
+// #include <SFML/Graphics.hpp>
 #define WINDOW_SIZE 1000
 
 using namespace std;
