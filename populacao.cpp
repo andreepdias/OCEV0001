@@ -90,7 +90,9 @@ public:
         k = p.kk;
         kp = p.kp;
         t = p.t;
+        cout << "   ---   T: " << t << endl;
         d = p.d;
+        cout << "   ---   D: " << d << endl;
         c = p.c;
         
         draw = p.DRAW;

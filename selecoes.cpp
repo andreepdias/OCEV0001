@@ -10,9 +10,12 @@ int Populacao::girar_roleta(vector<pair<double, int> > &participantes, int ignor
     double soma_acumulada = 0.0;
     double r = distribution(engine);
 
+    printf("Random roleta: %lf\n", r);
+
     for(int i = 0; i < participantes.size(); i++){
         if(participantes[i].second == ignorado) continue;
         if(soma_acumulada + participantes[i].first >= r){
+            printf("Fitness[%d]: %lf\tSoma_acumulada: %lf\n", participantes[i].second, participantes[i].first, soma_acumulada);
             return participantes[i].second;
         }
         soma_acumulada += participantes[i].first;
@@ -27,6 +30,7 @@ void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int
     double somatorio = 0.0;
     for(int i = 0; i < individuos.size(); i++){ // CALCULA A SOMA DOS FITNESS
         somatorio += valor(individuos[i]);
+        printf("Fitness: %lf\tSomatorio: %lf\n", valor(individuos[i]), somatorio);
     }
 
     double somatorio_atual, individuo_escolhido = -1;
@@ -35,15 +39,20 @@ void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int
 
         if(individuo_escolhido != -1){ // IGONRA INDIVIUDO ESCOLHIO
             somatorio_atual -= valor(individuo_escolhido);
+            printf("Somatorio atual: %lf\n", somatorio_atual);
         }
         somatorio_atual = somatorio_atual == 0 ? DBL_EPSILON : somatorio_atual;
 
+        double sum = 0;
         for(int x = 0; x < individuos.size(); x++){ // CALCULA FINESS RELATIVO
             if(individuos[x] == individuo_escolhido) continue;
             fitness_relativo[x].second = individuos[x];
             fitness_relativo[x].first = valor(individuos[x]) / somatorio_atual;
+            sum += fitness_relativo[x].first;
+            printf("Fitness relativo[%d]: %lf\tSum: %lf\n", fitness_relativo[x].second, fitness_relativo[x].first, sum);
         }
         int escolhido = girar_roleta(fitness_relativo, individuo_escolhido); // GIRA ROLETA E ESCOLHE
+        printf("Escolhendo: %d\tFitness: %lf\tRelativo: %lf\n", escolhido, (*fitness)[escolhido], fitness_relativo[escolhido].first);
         (*individuos_selecionados)[k++] = individuo_escolhido = escolhido;
     }
 }
@@ -144,21 +153,23 @@ void Populacao::selecao_vizinhanca()
         individuo_aleatorio = distribution(engine);
         (*individuos_selecionados)[x * 2] = individuo_aleatorio;
 
-        // printf("Individuo escolhido:\t\t\t\t%d\n", individuo_aleatorio);
+        // printf("Individuo escolhido: %d\n", individuo_aleatorio);
         if(t == 1){ // ESCOLHE MELHOR INDIVÍDUO DA VIZINHANÇA
             pair<double, int> melhor_individuo = make_pair(0.0, -1);
             for (int i = -d; i <= d; i++){
                 if (i == 0) continue;
 
                 int p = posicao(individuo_aleatorio, i);
+                // printf("Fitness[%d]: %lf\tMelhor.first: %lf\n", p, (*fitness)[p], melhor_individuo.first);
 
                 if ((*fitness)[p] >= melhor_individuo.first){
                     melhor_individuo.first = (*fitness)[p];
                     melhor_individuo.second = p;
+                    // printf("Escolhendo melhor: %d\n", melhor_individuo.second);
                 }
             }
             (*individuos_selecionados)[x * 2 + 1] = melhor_individuo.second;
-            printf("Inviduo escolhido melhor vizinhanca:\t\t%d\n\n", melhor_individuo.second);
+            // printf("Inviduo escolhido melhor vizinhanca:\t\t%d\n\n", melhor_individuo.second);
         }else if(t == 2){ // ESCOLHE INDIVÍDUO ALEATÓRIO DA VIZINHANÇA
             do{
                 r = distribution_d(engine);
@@ -167,11 +178,13 @@ void Populacao::selecao_vizinhanca()
             int p = posicao(individuo_aleatorio, r);
 
             (*individuos_selecionados)[x * 2 + 1] = p;
-            printf("Inviduo escolhido aleatorio vizinhanca:\t\t%d\n\n", p);
+            // printf("Inviduo escolhido aleatorio vizinhanca:\t\t%d\n\n", p);
         }else if(t == 3){ // ESCOLHE INDIVÍDUO DA VIZINHANÇA PROPORCINAL AO FITNESS
             double somatorio = 0;
 
             vector<int> individuos(d * 2);
+
+            cout << "Hello\n";
 
             int k = 0;
             for(int i = -d; i <= d; i++){

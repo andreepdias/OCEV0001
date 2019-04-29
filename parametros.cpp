@@ -109,25 +109,25 @@ public:
                     printf("\tTorneio\tk:%d\tkp:%lf\n", kk, kp);
                 }else if(v == "VIZINHANCA"){
                     COD_SELECTION = 4;
-                    string t; int d;
+                    string tipo; int valor_d;
 
                     printf("\tVizinhanca\t");
-                    arquivo_parametros >> t;
-                    if(t == "MELHOR"){
+                    arquivo_parametros >> tipo;
+                    if(tipo == "MELHOR"){
                         t = 1;
-                        printf("melhor\t");
-                    }else if(t == "ALEATORIO"){
+                        printf("melhor %d\t", t);
+                    }else if(tipo == "ALEATORIO"){
                         t = 2;
                         printf("aleatorio\t");
-                    }else if(t == "PROPORCIONAL"){
+                    }else if(tipo == "PROPORCIONAL"){
                         t = 3;
                         printf("porporcional\t");
                     }else{
                         retorno += "Tipo de Selecao por vizinhanca nao encontrada.\n";
                     }
-                    arquivo_parametros >> d;
-                    d = d;
-                    printf("d; %d\n", d);
+                    arquivo_parametros >> valor_d;
+                    d = valor_d;
+                    printf("d: %d\n", d);
                 }else{
                     retorno += "Tipo de Selecao nao encontrada.\n";
                 }

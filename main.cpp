@@ -1,3 +1,10 @@
+/*
+indivudos
+50 ~ 100
+
+crossover
+*/
+
 // -lsfml-graphics -lsfml-window -lsfml-system
 #ifndef __MAIN_CPP
 #define __MAIN_CPP
@@ -46,7 +53,6 @@ void print_relatorio(Relatorio &r, int g, int gg);
             populacao.gerar_populacao_inicial();
             for (int i = 0; i < parametros.GEN; i++)
             {
-                // populacao.Fitness(i, out, k, window);
                 populacao.Fitness(i, out, k);
                 populacao.selecao();
                 populacao.crossover();
