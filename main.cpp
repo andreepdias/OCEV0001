@@ -55,6 +55,7 @@ void print_relatorio(Relatorio &r, int g, int gg);
             {
                 populacao.Fitness(i, out, k);
                 populacao.selecao();
+                // populacao.print_selecionados();
                 populacao.crossover();
                 populacao.mutation();
             }

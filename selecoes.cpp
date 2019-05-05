@@ -10,12 +10,12 @@ int Populacao::girar_roleta(vector<pair<double, int> > &participantes, int ignor
     double soma_acumulada = 0.0;
     double r = distribution(engine);
 
-    printf("Random roleta: %lf\n", r);
+    // printf("Random roleta: %lf\n", r);
 
     for(int i = 0; i < participantes.size(); i++){
         if(participantes[i].second == ignorado) continue;
         if(soma_acumulada + participantes[i].first >= r){
-            printf("Fitness[%d]: %lf\tSoma_acumulada: %lf\n", participantes[i].second, participantes[i].first, soma_acumulada);
+            // printf("Fitness[%d]: %lf\tSoma_acumulada: %lf\n", participantes[i].second, participantes[i].first, soma_acumulada);
             return participantes[i].second;
         }
         soma_acumulada += participantes[i].first;
@@ -30,7 +30,7 @@ void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int
     double somatorio = 0.0;
     for(int i = 0; i < individuos.size(); i++){ // CALCULA A SOMA DOS FITNESS
         somatorio += valor(individuos[i]);
-        printf("Fitness: %lf\tSomatorio: %lf\n", valor(individuos[i]), somatorio);
+        // printf("Fitness: %lf\tSomatorio: %lf\n", valor(individuos[i]), somatorio);
     }
 
     double somatorio_atual, individuo_escolhido = -1;
@@ -39,7 +39,7 @@ void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int
 
         if(individuo_escolhido != -1){ // IGONRA INDIVIUDO ESCOLHIO
             somatorio_atual -= valor(individuo_escolhido);
-            printf("Somatorio atual: %lf\n", somatorio_atual);
+            // printf("Somatorio atual: %lf\n", somatorio_atual);
         }
         somatorio_atual = somatorio_atual == 0 ? DBL_EPSILON : somatorio_atual;
 
@@ -49,10 +49,10 @@ void Populacao::roleta(vector<int> &individuos, function<double(int)> valor, int
             fitness_relativo[x].second = individuos[x];
             fitness_relativo[x].first = valor(individuos[x]) / somatorio_atual;
             sum += fitness_relativo[x].first;
-            printf("Fitness relativo[%d]: %lf\tSum: %lf\n", fitness_relativo[x].second, fitness_relativo[x].first, sum);
+            // printf("Fitness relativo[%d]: %lf\tSum: %lf\n", fitness_relativo[x].second, fitness_relativo[x].first, sum);
         }
         int escolhido = girar_roleta(fitness_relativo, individuo_escolhido); // GIRA ROLETA E ESCOLHE
-        printf("Escolhendo: %d\tFitness: %lf\tRelativo: %lf\n", escolhido, (*fitness)[escolhido], fitness_relativo[escolhido].first);
+        // printf("Escolhendo: %d\tFitness: %lf\tRelativo: %lf\n", escolhido, (*fitness)[escolhido], fitness_relativo[escolhido].first);
         (*individuos_selecionados)[k++] = individuo_escolhido = escolhido;
     }
 }
