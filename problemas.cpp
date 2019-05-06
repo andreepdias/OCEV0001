@@ -38,18 +38,13 @@ void Dominio_Binario::radiosSTLX()
         }
         valor_st = roundf((24.0 / 31) * valor_st);
         valor_lx = roundf((16.0 / 31) * valor_lx);
-        if(valor_st > 24){
-            printf("st: %lf\n", valor_st);
-        }
-        if(valor_lx > 24){
-            printf("lx: %lf\n", valor_lx);
-        }
         penalizacao = max(0.0, double(valor_st + 2 * valor_lx - 40) / 16); //penalização baseada na quantidade de homens possível
         (*infracoes)[i] = penalizacao;
         valor_funcao_objetivo = ((30 * valor_st + 40 * valor_lx) * 1.0);
         (*funcoes_objetivo)[i] = valor_funcao_objetivo;
-        valor_funcao_objetivo /= 1040;  //normalização com o total alcançavel
-        (*fitness)[i] = max((valor_funcao_objetivo - penalizacao),0.0);
+        valor_funcao_objetivo /= 1040;
+        valor_funcao_objetivo -= abs(penalizacao);  //normalização com o total alcançavel
+        (*fitness)[i] = max((valor_funcao_objetivo),0.0);
     }
     
 }

@@ -55,7 +55,7 @@ void print_relatorio(Relatorio &r, int g, int gg);
             {
                 populacao.Fitness(i, out, k);
                 populacao.selecao();
-                // populacao.print_selecionados();
+                // populacao.print  _selecionados();
                 populacao.crossover();
                 populacao.mutation();
             }
@@ -99,10 +99,10 @@ void print_relatorio(Relatorio &r, int g, int gg);
         int indice_melhor_fo = -1;
         for (int i = 0; i < parametros.RUN; i++)
         {
-            printf("Execucao %d:\n", i + 1);
-            printf("\tMelhor solucao encontada:\n");
-            printf("\t\tFuncao Objetivo: %lf\n", relatorios[i].funcao_objetivo);
-            printf("\t\tInfracoes: %lf\n", relatorios[i].infracao_restricoes);
+            // printf("Execucao %d:\n", i + 1);
+            // printf("\tMelhor solucao encontada:\n");
+            // printf("\t\tFuncao Objetivo: %lf\n", relatorios[i].funcao_objetivo);
+            // printf("\t\tInfracoes: %lf\n", relatorios[i].infracao_restricoes);
             media += relatorios[i].funcao_objetivo;
 
             if (relatorios[i].funcao_objetivo > melhor_fo)

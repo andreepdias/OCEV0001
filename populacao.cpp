@@ -312,7 +312,7 @@ public:
 
         melhor = max(melhor, melhor_individuo_fitness);
 
-        if(k % intervalo_plot == 0){
+        if((k + 1) % intervalo_plot == 0){
             out[gen] << k << " " << melhor << " " << pior << " " << media << endl;
             out[execucoes] << k << " " << melhor << " " << pior << " " << media << endl;
             
