@@ -1,0 +1,84 @@
+RANKING
+
+Final das execucoes:
+	Funcao Objetivo:
+		Media:	1040.000000
+		Desvio Padrao:	0.000000
+
+	Melhor solucao: execucao 1
+
+		Funcao Objetivo: 1040.000000
+		Infracoes: 0.000000
+
+		Variaveis:
+standard:  31 --- deluxe:  15 --- 
+
+
+
+COD BIN
+RUN 10
+GEN 100
+POP 30
+DIM 10
+PC 0.9
+PM 0.03
+ELIT 1
+COD-SELECTION RANKING
+COD-CROSSOVER NCORTES 2
+COD-MUTATION BIT-FLIP
+PROBLEM RADIOS
+PLOT-INTERVAL 1
+DRAW 0
+
+
+
+__________________
+
+TORNEIO 4 1
+
+Final das execucoes:
+	Funcao Objetivo:
+		Media:	1040.000000
+		Desvio Padrao:	0.000000
+
+	Melhor solucao: execucao 1
+
+		Funcao Objetivo: 1040.000000
+		Infracoes: 0.000000
+
+		Variaveis:
+standard:  31 --- deluxe:  16 --- 
+
+
+__________________
+
+
+VIZINHANCA MELHOR 3
+
+Final das execucoes:
+	Funcao Objetivo:
+		Media:	1040.000000
+		Desvio Padrao:	0.000000
+
+	Melhor solucao: execucao 1
+
+		Funcao Objetivo: 1040.000000
+		Infracoes: 0.000000
+
+		Variaveis:
+standard:  31 --- deluxe:  15 --
+
+COD BIN
+RUN 10
+GEN 100
+POP 30
+DIM 10
+PC 0.9
+PM 0.05
+ELIT 1
+COD-SELECTION VIZINHANCA MELHOR 3
+COD-CROSSOVER NCORTES 2
+COD-MUTATION BIT-FLIP
+PROBLEM RADIOS
+PLOT-INTERVAL 1
+DRAW 0

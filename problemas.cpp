@@ -42,9 +42,8 @@ void Dominio_Binario::radiosSTLX()
         (*infracoes)[i] = penalizacao;
         valor_funcao_objetivo = ((30 * valor_st + 40 * valor_lx) * 1.0);
         (*funcoes_objetivo)[i] = valor_funcao_objetivo;
-        valor_funcao_objetivo /= 1040;
-        valor_funcao_objetivo -= abs(penalizacao);  //normalização com o total alcançavel
-        (*fitness)[i] = max((valor_funcao_objetivo),0.0);
+        valor_funcao_objetivo /= 1040;  //normalização com o total alcançavel
+        (*fitness)[i] = max((valor_funcao_objetivo - penalizacao),0.0);
     }
     
 }
