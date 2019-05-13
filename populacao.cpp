@@ -19,6 +19,7 @@ public:
     double probabilidade_mutacao;
     bool elitismo;
     int problema;
+    double *diversidade;
 
     int k; double kp;
     int t, d;
@@ -82,6 +83,7 @@ public:
 
         probabilidade_crossover = p.PC;
         probabilidade_mutacao = p.PM;
+        (*diversidade) = 0;
 
         elitismo = p.ELIT;
 
@@ -150,25 +152,25 @@ public:
             melhor_individuo_binario = new vector<bool>();
             individuos_binario = new vector<vector<bool> >();
             individuos_intermediarios_binario = new vector<vector<bool> >();
-            db = new Dominio_Binario(tamanho_populacao, tamanho_cromossomo, limites, individuos_binario, individuos_intermediarios_binario, melhor_individuo_binario, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo);
+            db = new Dominio_Binario(tamanho_populacao, tamanho_cromossomo, limites, individuos_binario, individuos_intermediarios_binario, melhor_individuo_binario, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo, diversidade);
             break;
         case INTEIRO:
             melhor_individuo_inteiro = new vector<int>();
             individuos_inteiro = new vector<vector<int> >();
             individuos_intermediarios_inteiro = new vector<vector<int> >();
-            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, individuos_intermediarios_inteiro, melhor_individuo_inteiro, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo);
+            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, individuos_intermediarios_inteiro, melhor_individuo_inteiro, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo, diversidade);
             break;
         case INTEIRO_PERMUTADO:
             melhor_individuo_inteiro_permutado = new vector<int>();
             individuos_inteiro_permutado = new vector<vector<int> >();
             individuos_intermediarios_inteiro_permutado = new vector<vector<int> >();
-            dp = new Dominio_Inteiro_Permutado(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro_permutado, individuos_intermediarios_inteiro_permutado, melhor_individuo_inteiro_permutado, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, tabuleiro_lucro, infracoes, funcoes_objetivo, posicao_infracao, draw);
+            dp = new Dominio_Inteiro_Permutado(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro_permutado, individuos_intermediarios_inteiro_permutado, melhor_individuo_inteiro_permutado, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, tabuleiro_lucro, infracoes, funcoes_objetivo, posicao_infracao, draw, diversidade);
             break;
         case REAL:
             melhor_individuo_real = new vector<double>();
             individuos_real = new vector<vector<double> >();
             individuos_intermediarios_real = new vector<vector<double> >();
-            dr = new Dominio_Real(tamanho_populacao, tamanho_cromossomo, limites, individuos_real, individuos_intermediarios_real, melhor_individuo_real, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo);
+            dr = new Dominio_Real(tamanho_populacao, tamanho_cromossomo, limites, individuos_real, individuos_intermediarios_real, melhor_individuo_real, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo, diversidade);
             break;
         }
     }
