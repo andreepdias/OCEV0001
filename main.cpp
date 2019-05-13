@@ -152,6 +152,7 @@ void grafico_convergencia(Parametros & parametros)
     {
         string s = "tempos_" + to_string(i + 1);
         in[i].open(s.c_str());
+        s = "diversidade_" + to_string(i + 1);
         ind[i].open(s.c_str());
     }
     graficos.open("tempos");
