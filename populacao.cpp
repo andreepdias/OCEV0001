@@ -287,7 +287,7 @@ public:
         }
     }
 
-     void calcula_diversidade(int k, ofstream out[], int gen){
+     void calcula_diversidade(int k, ofstream out[], int gen, double &maior_diversidade){
         if(problema == 1){
             (*dp).calcula_diversidade();
         }else if(problema == 2){
@@ -295,6 +295,7 @@ public:
         }else if(problema == 3){
             (*dp).calcula_diversidade();
         }
+        maior_diversidade = max(maior_diversidade, (*diversidade));
         if((k + 1) % intervalo_plot == 0){
             out[gen] << k << " " << (*diversidade) << endl;
             out[execucoes] << k << " " << (*diversidade) << endl;

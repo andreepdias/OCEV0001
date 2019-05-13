@@ -45,6 +45,8 @@ int main(int argc, char const *argv[])
     vector<Relatorio> relatorios(parametros.RUN);
     Populacao populacao(parametros);
 
+    double maior_diversidade = 0;
+
     for (int k = 0; k < parametros.RUN; k++)
     {
         string s = "tempos_" + to_string(k + 1);
@@ -59,13 +61,13 @@ int main(int argc, char const *argv[])
         for (int i = 0; i < parametros.GEN; i++)
         {
             populacao.Fitness(i, graficos, k);
-            populacao.calcula_diversidade(i, diversidade, k);
+            populacao.calcula_diversidade(i, diversidade, k, maior_diversidade);
             populacao.selecao();
             populacao.crossover();
             populacao.mutation();
         }
         populacao.Fitness(parametros.GEN, graficos, k);
-        populacao.calcula_diversidade(parametros.GEN, diversidade, k);
+        populacao.calcula_diversidade(parametros.GEN, diversidade, k, maior_diversidade);
 
         relatorios[k] = populacao.relatorio_execucao();
 
@@ -75,7 +77,7 @@ int main(int argc, char const *argv[])
         graficos[parametros.RUN].close();
     }
 
-    grafico_convergencia(parametros);
+    grafico_convergencia(parametros, maior_diversidade);
     relatorio_fim_execucoes(parametros, relatorios);
 
     /*
@@ -140,7 +142,7 @@ void relatorio_fim_execucoes(Parametros & parametros, vector<Relatorio> & relato
     }
 }
 
-void grafico_convergencia(Parametros & parametros)
+void grafico_convergencia(Parametros & parametros, double &maior_diversidade)
 {
 
     ifstream in[parametros.RUN];
@@ -177,7 +179,7 @@ void grafico_convergencia(Parametros & parametros)
         m_melhor /= parametros.RUN;
         m_pior /= parametros.RUN;
         m_media /= parametros.RUN;
-        m_diversidade += parametros.RUN;
+        m_diversidade /= parametros.RUN / maior_diversidade;
         graficos << geracao << " " << m_melhor << " " << m_pior << " " << m_media << endl;
         diversidades << geracao << " " << m_diversidade << endl;
     }
