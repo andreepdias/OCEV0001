@@ -208,7 +208,7 @@ private:
     random_device device{};
     mt19937 engine{device()};
 public:
-    Dominio_Real(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<double> > *_i, vector<vector<double> > *_ii, vector<double> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm, vector<double> *_if, vector<double> *_fo, _diversidade{
+    Dominio_Real(int _tp, int _tc, vector<pair<double, double> > *_l, vector<vector<double> > *_i, vector<vector<double> > *_ii, vector<double> *_m, vector<double> *_f, vector<int> *_is, double _pc, double _pm, vector<double> *_if, vector<double> *_fo, double *_diversidade){
         fitness = _f;
         infracoes = _if;
         funcoes_objetivo = _fo;
