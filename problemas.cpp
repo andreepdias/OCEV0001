@@ -193,4 +193,12 @@ vector <pair<string, double> >  Dominio_Inteiro_Permutado::calcula_variaveis_nqu
     return variaveis;
 }
 
+
+void Dominio_Inteiro::labirinto(){
+
+    
+
+}
+
+
 #endif

@@ -14,7 +14,7 @@ crossover
 using namespace std;
 
 void relatorio_fim_execucoes(Parametros &parametros, vector<Relatorio> &relatorios);
-void grafico_convergencia(Parametros &parametros);
+void grafico_convergencia(Parametros &parametros, double &maior_diversidade);
 void print_relatorio(Relatorio &r, int g, int gg);
 
 int main(int argc, char const *argv[])

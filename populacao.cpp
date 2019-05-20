@@ -21,6 +21,8 @@ public:
     int problema;
     double *diversidade;
 
+    int limite_inferior, limite_superior;
+
     int k; double kp;
     int t, d;
     
@@ -89,6 +91,9 @@ public:
         elitismo = p.ELIT;
 
         problema = p.PROBLEM;
+
+        limite_inferior = p.lower;
+        limite_superior = p.upper;
 
         k = p.kk;
         kp = p.kp;
@@ -159,7 +164,7 @@ public:
             melhor_individuo_inteiro = new vector<int>();
             individuos_inteiro = new vector<vector<int> >();
             individuos_intermediarios_inteiro = new vector<vector<int> >();
-            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, individuos_intermediarios_inteiro, melhor_individuo_inteiro, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo, diversidade);
+            di = new Dominio_Inteiro(tamanho_populacao, tamanho_cromossomo, limites, individuos_inteiro, individuos_intermediarios_inteiro, melhor_individuo_inteiro, fitness, individuos_selecionados, probabilidade_crossover, probabilidade_mutacao, infracoes, funcoes_objetivo, diversidade, limite_inferior, limite_superior);
             break;
         case INTEIRO_PERMUTADO:
             melhor_individuo_inteiro_permutado = new vector<int>();

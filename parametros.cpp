@@ -13,6 +13,8 @@ public:
     int POP;
     int DIM;
 
+    int lower, upper;
+
     double PC;
     double PM;
 
@@ -105,8 +107,7 @@ public:
                     kk = stoi(x);
                     arquivo_parametros >> x;
                     kp = stof(x);
-
-                    printf("\tTorneio\tk:%d\tkp:%lf\n", kk, kp);
+                        printf("\tTorneio\tk:%d\tkp:%lf\n", kk, kp);
                 }else if(v == "VIZINHANCA"){
                     COD_SELECTION = 4;
                     string tipo; int valor_d;
@@ -150,7 +151,8 @@ public:
                 }else if(v == "UNIFORME"){
                     if(COD == 0){
                         COD_CROSSOVER = 3;
-                    }else if(COD == 1){
+                    }else if(COD == 1)
+                    {
                         COD_CROSSOVER = 4;
                     }else{
                         retorno += "Defina o tipo de variavel antes de escolher o Crossover Uniforme\n";
@@ -213,6 +215,11 @@ public:
                 printf("Plot-Interval:\n");
                 PLOT_INTERVAL = stoi(v);
                 printf("\t%d\n", PLOT_INTERVAL);
+            }else if(k == "LIMITES"){
+                string s;
+                cin >> s;
+                lower = stoi(v);
+                upper = stoi(s);
             }
         }
         return retorno;
