@@ -4,8 +4,21 @@ using namespace std;
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
+double fx_infracao(int j){
+    double fx = 1.0 / sqrt(j);
+    fx = fx > 1.0 ? 1 : fx;
+    return fx;
+}
+
 int main()
 {
+    while(true){
+        int j;
+        cin >> j;
+        double fx = fx_infracao(j);
+        cout << fx << endl;
+    }
+    
 
     vvi matrix;
     matrix = {
@@ -43,6 +56,17 @@ int main()
 
     cout << matrix.size() << endl;
     cout << matrix[0].size() << endl;
+
+    int linhas = matrix.size();
+    int colunas = matrix[0].size();
+
+    for(int i =0 ; i < linhas ; i++){
+        for(int j = 0; j < colunas; j++){
+            if(matrix[i][j] == 2 or matrix[i][j] == 3){
+                printf("i: %d\tj:%d\t%d\n", i, j, matrix[i][j]);
+            }
+        }
+    }
 
     /*
         print_cromossomo(p1);

@@ -160,6 +160,7 @@ public:
     }
 
     void labirinto();
+    double fx_infracao(int j);
 
     void crossover_n_cortes_int(int qtd_pontos_corte);
     void crossover_uniforme_int();

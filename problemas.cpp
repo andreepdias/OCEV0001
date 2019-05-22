@@ -193,10 +193,70 @@ vector <pair<string, double> >  Dominio_Inteiro_Permutado::calcula_variaveis_nqu
     return variaveis;
 }
 
+bool isValid(int x, int y, int sx, int sy){
+    if(x < 0 or y < 0 or x >= sx or y >= sy)
+        return false;
+    return true;
+}
+
+double Dominio_Inteiro::fx_infracao(int j){
+    double fx = 1.0 / sqrt(j);
+    fx = fx > 1.0 ? 1 : fx;
+    return fx;
+}
 
 void Dominio_Inteiro::labirinto(){
 
-    
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+    int sx = matrix_labirinto.size();
+    int sy = matrix_labirinto[0].size();
+
+
+    for(int i = 0; i < tamanho_populacao; i++){ // percorre todas as soluções
+        double fo = 0;
+        int celulas_validas = 0, celulas_invalidas = 0, celulas_diferentes = 0;
+        int x = 10, y = 1;
+        bool celula_final = false;
+        int indice_final = -1;
+
+        vector<vector<bool> > visitados(sx, vector<bool> (sy, false));
+        visitados[x][y] = true;
+
+        double fitness_movimentos = 1.0;
+
+        for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
+            int k = (*individuos)[i][j];;
+            if(isValid(x + dx[k], y + dy[k], sx, sy)){
+                x = x + dx[k];
+                y = y + dy[k];
+            }
+
+            if(!visitados[x][y]){
+                visitados[x][y] = true;
+                celulas_diferentes++;
+            }
+
+            if(matrix_labirinto[x][y] == 0){
+                celulas_invalidas++;
+                fitness_movimentos -= fx_infracao(j);
+                fitness_movimentos = fitness_movimentos < 0 ? 0 : fitness_movimentos;
+            }else{
+                celulas_validas++;
+            }
+
+            if(matrix_labirinto[x][y] == 3){
+                celula_final = true;
+                indice_final = j;
+                break;
+            }
+
+        }
+
+        (*funcoes_objetivo)[i] = celula_final == true ? indice_final : 100;
+        (*infracoes)[i] = celulas_invalidas;
+        (*fitness)[i] = 0;
+    }
 
 }
 
