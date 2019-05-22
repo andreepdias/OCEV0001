@@ -12,8 +12,8 @@ void Dominio_Binario::crossover_n_cortes_bin(int qtd_pontos_corte){
     for(int i = 0; i < tamanho_populacao; i += 2)
     {
         /*
-        print_cromossomo((*individuos_selecionados)[i]);
-        print_cromossomo((*individuos_selecionados)[i + 1]);
+        print_cromossomo(i);
+        print_cromossomo(i + 1);
         */
         for(int j = 0; j < qtd_pontos_corte; j++)
         {
@@ -40,14 +40,14 @@ void Dominio_Binario::crossover_n_cortes_bin(int qtd_pontos_corte){
         {
             for(int k = cortes_ordenados[j]; k < cortes_ordenados[j + 1]; k++)
             {
-                bool aux = (*individuos)[(*individuos_selecionados)[i]][k];
-                (*individuos)[(*individuos_selecionados)[i]][k] = (*individuos)[(*individuos_selecionados)[i + 1]][k];
-                (*individuos)[(*individuos_selecionados)[i + 1]][k] = aux;
+                bool aux = (*individuos)[i][k];
+                (*individuos)[i][k] = (*individuos)[i + 1][k];
+                (*individuos)[i + 1][k] = aux;
             }
         }
         /*
-        print_cromossomo((*individuos_selecionados)[i]);
-        print_cromossomo((*individuos_selecionados)[i + 1]);
+        print_cromossomo(i);
+        print_cromossomo(i + 1);
         printf("\n");
         */
     }
@@ -61,36 +61,35 @@ void Dominio_Binario::crossover_uniforme_bin()
     for(int i = 0; i < tamanho_populacao; i += 2)
     {
         /*
-        print_cromossomo((*individuos_selecionados)[i]);
-        print_cromossomo((*individuos_selecionados)[i + 1]);
+        print_cromossomo(i);
+        print_cromossomo(i + 1);
         */
         for(int j = 0; j < tamanho_cromossomo; j++)
         {
             int moeda = distribution(engine);
             if(moeda){
-                bool aux = (*individuos)[(*individuos_selecionados)[i]][j];
-                (*individuos)[(*individuos_selecionados)[i]][j] = (*individuos)[(*individuos_selecionados)[i + 1]][j];
-                (*individuos)[(*individuos_selecionados)[i + 1]][j] = aux;
+                bool aux = (*individuos)[i][j];
+                (*individuos)[i][j] = (*individuos)[i + 1][j];
+                (*individuos)[i + 1][j] = aux;
             }
         }
         /*
-        print_cromossomo((*individuos_selecionados)[i]);
-        print_cromossomo((*individuos_selecionados)[i + 1]);
+        print_cromossomo(i);
+        print_cromossomo(i + 1);
         printf("\n");
         */
     }
 }
 
-/*
-void Populacao::crossover_n_cortes_int(int qtd_pontos_corte){
-    map<int, bool> indices_ponto_corte;
-    vector<int> cortes_ordenados;
+
+void Dominio_Inteiro::crossover_n_cortes_int(int qtd_pontos_corte){
     uniform_int_distribution<int> distribution{1, tamanho_cromossomo - 1};
+
 
     for(int i = 0; i < tamanho_populacao; i += 2)
     {
-        print_gene((*individuos_selecionados)[i]);
-        print_gene((*individuos_selecionados)[i + 1]);
+        map<int, bool> indices_ponto_corte;
+        vector<int> cortes_ordenados;
         for(int j = 0; j < qtd_pontos_corte; j++)
         {
             int ponto_corte_aleatorio;
@@ -105,51 +104,37 @@ void Populacao::crossover_n_cortes_int(int qtd_pontos_corte){
         cortes_ordenados.push_back(tamanho_cromossomo);
         sort(cortes_ordenados.begin(), cortes_ordenados.end());
 
-        printf("Cortes: ");
-        for(int i = 0; i < qtd_pontos_corte; i++){
-            printf("%d ", cortes_ordenados[i]);
-        }
-        printf("\n");
-
         for(int j = 0; j < qtd_pontos_corte; j += 2)
         {
             for(int k = cortes_ordenados[j]; k < cortes_ordenados[j + 1]; k++)
             {
-                int aux = (*individuos_inteiro)[(*individuos_selecionados)[i]][k];
-                (*individuos_inteiro)[(*individuos_selecionados)[i]][k] = (*individuos_inteiro)[(*individuos_selecionados)[i + 1]][k];
-                (*individuos_inteiro)[(*individuos_selecionados)[i + 1]][k] = aux;
+                int aux = (*individuos)[i][k];
+                (*individuos)[i][k] = (*individuos)[i + 1][k];
+                (*individuos)[i + 1][k] = aux;
             }
         }
-        print_gene((*individuos_selecionados)[i]);
-        print_gene((*individuos_selecionados)[i + 1]);
-        printf("\n");
     }
 }
 
-void Populacao::crossover_uniforme_int(){
+void Dominio_Inteiro::crossover_uniforme_int(){
 
     uniform_int_distribution<int> distribution{0, 1};
 
     for(int i = 0; i < tamanho_populacao; i += 2)
     {
-        print_gene((*individuos_selecionados)[i]);
-        print_gene((*individuos_selecionados)[i + 1]);
         for(int j = 0; j < tamanho_cromossomo; j++)
         {
             int moeda = distribution(engine);
             if(moeda){
-                int aux = (*individuos_inteiro)[(*individuos_selecionados)[i]][j];
-                (*individuos_inteiro)[(*individuos_selecionados)[i]][j] = (*individuos_inteiro)[(*individuos_selecionados)[i + 1]][j];
-                (*individuos_inteiro)[(*individuos_selecionados)[i + 1]][j] = aux;
+                int aux = (*individuos)[i][j];
+                (*individuos)[i][j] = (*individuos)[i + 1][j];
+                (*individuos)[i + 1][j] = aux;
             }
         }
-        
-        print_gene((*individuos_selecionados)[i]);
-        print_gene((*individuos_selecionados)[i + 1]);
-        printf("\n");
     }
 }
 
+/*
 void Populacao::crossover_blx_real(double alpha = 0.5){
     for(int i = 0; i < tamanho_populacao; i += 2)
     {

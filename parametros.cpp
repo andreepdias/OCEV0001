@@ -184,6 +184,9 @@ public:
                 }else if(v == "SWAP"){
                     COD_MUTATION = 3;
                     printf("\tSwap\n");
+                }else if(v == "INTEIRA"){
+                    COD_MUTATION = 4;
+                    printf("\tSwap\n");
                 }else{
                     retorno += "Tipo de Mutacao nao encontrado\n";
                 }
@@ -200,6 +203,9 @@ public:
                 }else if(v == "NQUEENSPROFIT"){
                     PROBLEM = 3;
                     printf("\tNQueensProfit\n");
+                }else if(v == "LABIRINTO"){
+                    PROBLEM = 4;
+                    printf("\tLabirinto\n");
                 }else{
                     retorno += "Problema nao encontrado.\n";
                 }
@@ -216,10 +222,11 @@ public:
                 PLOT_INTERVAL = stoi(v);
                 printf("\t%d\n", PLOT_INTERVAL);
             }else if(k == "LIMITES"){
-                string s;
-                cin >> s;
+                string x;
+                arquivo_parametros >> x;
                 lower = stoi(v);
-                upper = stoi(s);
+                upper = stoi(x);
+                printf("LIMITES: %d\t%d\n", lower, upper);
             }
         }
         return retorno;

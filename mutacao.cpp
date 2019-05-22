@@ -48,6 +48,29 @@ void Populacao::bit_flip(){
         }
     }
 }
+
+void Dominio_Inteiro::mutacao_inteira(){
+
+    uniform_real_distribution<double> distribution_real{0.0, 1.0};
+    uniform_int_distribution<int> distribution_int{limite_inferior, limite_superior};
+    double r;
+    for (int i = 0; i < tamanho_populacao; i++)
+    {
+        for (int j = 0; j < tamanho_cromossomo; j++)
+        {
+            r = distribution_real(engine);
+            if (r <= probabilidade_mutacao)
+            {
+                int random;
+                do{
+                    random = distribution_int(engine);
+                }while(random == (*individuos)[i][j]);
+                
+                (*individuos)[i][j] = random;
+            }
+        }
+    }
+}
 /*
 void Populacao::mutacao_delta(double limite_inferior, double limite_superior, int denominador = 10){
     uniform_real_distribution<double> distribution_real{limite_inferior, limite_superior};

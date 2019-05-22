@@ -53,21 +53,21 @@ int main(int argc, char const *argv[])
         graficos[k].open(s.c_str());
         graficos[parametros.RUN].open("tempos");
 
-        s = "diversidade_" + to_string(k + 1);
-        diversidade[k].open(s.c_str());
-        diversidade[parametros.RUN].open("diversidade");
+        // s = "diversidade_" + to_string(k + 1);
+        // diversidade[k].open(s.c_str());
+        // diversidade[parametros.RUN].open("diversidade");
 
         populacao.gerar_populacao_inicial();
         for (int i = 0; i < parametros.GEN; i++)
         {
-            populacao.Fitness(i, graficos, k);
-            populacao.calcula_diversidade(i, diversidade, k, maior_diversidade);
+            populacao.Fitness(k, graficos, i);
+    //         populacao.calcula_diversidade(i, diversidade, k, maior_diversidade);
             populacao.selecao();
             populacao.crossover();
-            populacao.mutation();
+            // populacao.mutation();
         }
         populacao.Fitness(parametros.GEN, graficos, k);
-        populacao.calcula_diversidade(parametros.GEN, diversidade, k, maior_diversidade);
+    //     populacao.calcula_diversidade(parametros.GEN, diversidade, k, maior_diversidade);
 
         relatorios[k] = populacao.relatorio_execucao();
 
@@ -77,7 +77,7 @@ int main(int argc, char const *argv[])
         graficos[parametros.RUN].close();
     }
 
-    grafico_convergencia(parametros, maior_diversidade);
+    // grafico_convergencia(parametros, maior_diversidade);
     relatorio_fim_execucoes(parametros, relatorios);
 
     /*

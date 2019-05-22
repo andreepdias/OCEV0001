@@ -213,8 +213,7 @@ void Dominio_Inteiro::labirinto(){
     int sy = matrix_labirinto[0].size();
 
 
-    for(int i = 0; i < tamanho_populacao; i++){ // percorre todas as soluções
-        double fo = 0;
+    for(int i = 0;  i< tamanho_populacao; i++){ // percorre todas as soluções
         int celulas_validas = 0, celulas_invalidas = 0, celulas_diferentes = 0;
         int x = 10, y = 1;
         bool celula_final = false;
@@ -226,7 +225,7 @@ void Dominio_Inteiro::labirinto(){
         double fitness_movimentos = 1.0;
 
         for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
-            int k = (*individuos)[i][j];;
+            int k = (*individuos)[i][j];
             if(isValid(x + dx[k], y + dy[k], sx, sy)){
                 x = x + dx[k];
                 y = y + dy[k];
@@ -239,8 +238,12 @@ void Dominio_Inteiro::labirinto(){
 
             if(matrix_labirinto[x][y] == 0){
                 celulas_invalidas++;
-                fitness_movimentos -= fx_infracao(j);
-                fitness_movimentos = fitness_movimentos < 0 ? 0 : fitness_movimentos;
+                
+                if(celulas_invalidas == 1){
+                    fitness_movimentos -= fx_infracao(j);
+                    fitness_movimentos = fitness_movimentos < 0 ? 0 : fitness_movimentos;
+
+                }
             }else{
                 celulas_validas++;
             }
@@ -250,12 +253,11 @@ void Dominio_Inteiro::labirinto(){
                 indice_final = j;
                 break;
             }
-
         }
 
         (*funcoes_objetivo)[i] = celula_final == true ? indice_final : 100;
         (*infracoes)[i] = celulas_invalidas;
-        (*fitness)[i] = 0;
+        (*fitness)[i] = fitness_movimentos;
     }
 
 }

@@ -214,6 +214,8 @@ public:
             (*db).radiosSTLX();
         }else if(problema == 3){
             (*dp).NQueensProfit();
+        }else if(problema == 4){
+            (*di).labirinto();
         }
 
         double pior, melhor, media;
@@ -274,7 +276,44 @@ public:
                         (*melhor_individuo_real) = (*individuos_real)[indice_melhor];
                         break;
                 }
-            }else{
+            }else
+            {
+                for (int i = 0; i < tamanho_populacao; i++)
+                {
+                    int s = (*individuos_selecionados)[i];
+                    switch (tipo_variavel)
+                    {
+                    case BINARIO:
+                        (*individuos_intermediarios_binario)[i] = (*individuos_binario)[s];
+                        break;
+                    case INTEIRO:
+                        (*individuos_intermediarios_inteiro)[i] = (*individuos_inteiro)[s];
+                        break;
+                    case INTEIRO_PERMUTADO:
+                        (*individuos_intermediarios_inteiro_permutado)[i] = (*individuos_inteiro_permutado)[s];
+                        break;
+                    case REAL:
+                        (*individuos_intermediarios_real)[i] = (*individuos_real)[s];
+                        break;
+                    }
+                }
+
+                /* ATUALIZA POPULAÇÃO PRINCIPAL */
+                switch (tipo_variavel)
+                {
+                case BINARIO:
+                    (*individuos_binario) = (*individuos_intermediarios_binario);
+                    break;
+                case INTEIRO:
+                    (*individuos_inteiro) = (*individuos_intermediarios_inteiro);
+                    break;
+                case INTEIRO_PERMUTADO:
+                    (*individuos_inteiro_permutado) = (*individuos_intermediarios_inteiro_permutado);
+                    break;
+                case REAL:
+                    (*individuos_real) = (*individuos_intermediarios_real);
+                    break;
+                }
                 indice_melhor = indice_pior;
             }
             melhor_individuo_indice = indice_melhor;
@@ -285,8 +324,10 @@ public:
         melhor = max(melhor, melhor_individuo_fitness);
 
         if((k + 1) % intervalo_plot == 0){
-            out[gen] << k << " " << melhor << " " << pior << " " << media << endl;
-            out[execucoes] << k << " " << melhor << " " << pior << " " << media << endl;
+            // cout << (sizeof out) / sizeof out[0] << endl;
+            
+            // out[gen] << k << " " << melhor << " " << pior << " " << media << endl;
+            // out[execucoes] << k << " " << melhor << " " << pior << " " << media << endl;
             
             
         }
@@ -359,8 +400,12 @@ public:
             case 6:
                 (*dr).crossover_media_uniforme_real(); break;
                 */
+        case 2:
+            (*di).crossover_n_cortes_int(c);
+            break;
         case 8  :
             (*dp).crossover_pmx_intp();
+            break;
         }
     }
 
@@ -370,6 +415,8 @@ public:
                 bit_flip(); break;
             case 3:
                 (*dp).swap_mutation(); break;
+            case 4:
+                (*di).mutacao_inteira(); break;
         }
     }
 
