@@ -237,9 +237,6 @@ public:
         }
         media /= tamanho_populacao;
         
-        if (draw){
-            (*posicao_infracao)[tamanho_cromossomo] = (*posicao_infracao)[indice_melhor];
-        }
 
         if(elitismo){
             /* TROCA PIOR ÍNDIVIDUO PELO MELHOR DA GERAÇÃO ANTERIOR */        
@@ -316,10 +313,8 @@ public:
                 }
                 indice_melhor = indice_pior;
             }
-            melhor_individuo_indice = indice_melhor;
-
-
         }
+        melhor_individuo_indice = indice_melhor;
 
         melhor = max(melhor, melhor_individuo_fitness);
 
@@ -429,6 +424,8 @@ public:
                 variaveis = (*db).calcula_variaveis_radios(melhor_individuo_indice); break;
             case 3:
                 variaveis = (*dp).calcula_variaveis_nqueens(melhor_individuo_indice); break;
+            case 4:
+                variaveis = (*di).calcula_variaveis_labirinto(melhor_individuo_indice); break;
         }
         Relatorio r(
             (*fitness)[melhor_individuo_indice], 

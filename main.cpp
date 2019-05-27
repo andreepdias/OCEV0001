@@ -61,6 +61,7 @@ int main(int argc, char const *argv[])
         for (int i = 0; i < parametros.GEN; i++)
         {
             populacao.Fitness(k, graficos, i);
+            // populacao.print_populacao();
     //         populacao.calcula_diversidade(i, diversidade, k, maior_diversidade);
             populacao.selecao();
             populacao.crossover();
@@ -95,7 +96,7 @@ if(parametros.DRAW){
 
 void print_relatorio(Relatorio & r, int g, int gg)
 {
-    printf("Execucao: %2d/%2d --- Funcao Objetivo: %lf --- Infracoes: %lf\n", g, gg, r.funcao_objetivo, r.infracao_restricoes);
+    printf("Execucao: %2d/%2d --- Funcao Objetivo: %lf --- Infracoes: %lf --- x: %.0lf --- y: %.0lf\n", g, gg, r.funcao_objetivo, r.infracao_restricoes, r.variaveis[0].second, r.variaveis[1].second);
 }
 
 void relatorio_fim_execucoes(Parametros & parametros, vector<Relatorio> & relatorios)
@@ -140,6 +141,7 @@ void relatorio_fim_execucoes(Parametros & parametros, vector<Relatorio> & relato
         cout << relatorios[indice_melhor_fo].variaveis[i].first << ":";
         printf("%4.0lf --- ", relatorios[indice_melhor_fo].variaveis[i].second);
     }
+    cout << endl;
 }
 
 void grafico_convergencia(Parametros & parametros, double &maior_diversidade)

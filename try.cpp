@@ -12,13 +12,7 @@ double fx_infracao(int j){
 
 int main()
 {
-    while(true){
-        int j;
-        cin >> j;
-        double fx = fx_infracao(j);
-        cout << fx << endl;
-    }
-    
+   
 
     vvi matrix;
     matrix = {

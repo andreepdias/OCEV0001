@@ -217,7 +217,7 @@ void Dominio_Inteiro::labirinto(){
         int celulas_validas = 0, celulas_invalidas = 0, celulas_diferentes = 0;
         int x = 10, y = 1;
         bool celula_final = false;
-        int indice_final = -1;
+        int numero_movimentos = 100;
 
         vector<vector<bool> > visitados(sx, vector<bool> (sy, false));
         visitados[x][y] = true;
@@ -227,40 +227,114 @@ void Dominio_Inteiro::labirinto(){
         for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
             int k = (*individuos)[i][j];
             if(isValid(x + dx[k], y + dy[k], sx, sy)){
-                x = x + dx[k];
-                y = y + dy[k];
-            }
 
-            if(!visitados[x][y]){
-                visitados[x][y] = true;
-                celulas_diferentes++;
-            }
+                if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0){
+                    celulas_validas++;
+                    x = x + dx[k];
+                    y = y + dy[k];
 
-            if(matrix_labirinto[x][y] == 0){
-                celulas_invalidas++;
-                
-                if(celulas_invalidas == 1){
-                    fitness_movimentos -= fx_infracao(j);
-                    fitness_movimentos = fitness_movimentos < 0 ? 0 : fitness_movimentos;
-
+                    if(!visitados[x][y]){
+                        visitados[x][y] = true;
+                        celulas_diferentes++;
+                    }
                 }
-            }else{
-                celulas_validas++;
             }
 
             if(matrix_labirinto[x][y] == 3){
                 celula_final = true;
-                indice_final = j;
+                numero_movimentos = j + 1;
                 break;
             }
         }
+        celulas_invalidas = numero_movimentos - celulas_validas;
 
-        (*funcoes_objetivo)[i] = celula_final == true ? indice_final : 100;
+        (*funcoes_objetivo)[i] = celulas_diferentes;
         (*infracoes)[i] = celulas_invalidas;
-        (*fitness)[i] = fitness_movimentos;
+        (*fitness)[i] = celulas_diferentes / (numero_movimentos + pow(celulas_invalidas, 2));
     }
-
 }
 
+vector<pair<string, double>> Dominio_Inteiro::calcula_variaveis_labirinto(int indice)
+{
+    vector<vector<int> > matrix = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 1, 1, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+        {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0},
+        {0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
+        {0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0},
+        {0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0},
+        {0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0},
+        {0, 2, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0},
+        {0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0},
+        {0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0},
+        {0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0},
+        {0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0},
+        {0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0},
+        {0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0},
+        {0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0},
+        {0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0},
+        {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0},
+        {0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0},
+        {0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0},
+        {0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+
+    for(int i = 0; i < matrix.size(); i++){
+        for(int j = 0; j < matrix[0].size(); j++){
+            matrix[i][j] = 0;
+        }
+    }
+
+    vector<pair<string, double>> variaveis(2);
+
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+    int sx = matrix_labirinto.size();
+    int sy = matrix_labirinto[0].size();
+
+    int x = 10, y = 1;
+    matrix[x][y] = 1;
+
+    for (int j = 0; j < tamanho_cromossomo; j++){
+        int k = (*individuos)[indice][j];
+        if (isValid(x + dx[k], y + dy[k], sx, sy))
+        {
+            if (matrix_labirinto[x + dx[k]][y + dy[k]] != 0)
+            {
+                x = x + dx[k];
+                y = y + dy[k];
+                matrix[x][y] = 1;
+            }
+        }
+    }
+
+    for(int i = 0; i < matrix.size(); i++){
+        for(int j = 0; j < matrix[0].size(); j++){
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    variaveis[0] = make_pair("x", x);
+    variaveis[1] = make_pair("y", y);
+
+    return variaveis;
+}
 
 #endif
+
+
+// correção
+// mutação dos pontos de colisão
+
+
+// topologico, situacional, temporal
