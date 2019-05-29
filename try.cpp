@@ -12,10 +12,8 @@ double fx_infracao(int j){
 
 int main()
 {
-   
 
-    vvi matrix;
-    matrix = {
+    vector<vector<int>> matrix_labirinto = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 3, 1, 1, 0, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
@@ -45,22 +43,83 @@ int main()
         {0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0},
         {0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0},
         {0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    };
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
-    cout << matrix.size() << endl;
-    cout << matrix[0].size() << endl;
+        vector<vector<int>> matrix = matrix_labirinto;
 
-    int linhas = matrix.size();
-    int colunas = matrix[0].size();
-
-    for(int i =0 ; i < linhas ; i++){
-        for(int j = 0; j < colunas; j++){
-            if(matrix[i][j] == 2 or matrix[i][j] == 3){
-                printf("i: %d\tj:%d\t%d\n", i, j, matrix[i][j]);
+        for (int i = 0; i < matrix_labirinto.size(); i++){
+            for (int j = 0; j < matrix_labirinto[0].size(); j++){
+                matrix[i][j] = 0;
             }
         }
-    }
+
+        int dx[] = {-1, 1, 0, 0};
+        int dy[] = {0, 0, -1, 1};
+        int sx = matrix_labirinto.size();
+        int sy = matrix_labirinto[0].size();
+
+        int x = 10, y = 1;
+        matrix[x][y] = 1;
+
+        vector<vector<bool>> visitados(sx, vector<bool>(sy, false));
+        visitados[x][y] = true;
+
+        for (int j = 0; j < 100; j++)
+        { // percorre todas as rainha de uma solução
+            int k = rand() % 4;
+
+            int c = 0, aux_k = 0;
+            while (matrix_labirinto[x + dx[k]][y + dy[k]] == 0)
+            {
+                k = (k + 1) % 4;
+                if (matrix_labirinto[x + dx[k]][y + dy[k]] != 0)
+                {
+                    if (!visitados[x + dx[k]][y + dy[k]])
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        aux_k = k;
+                    }
+                }
+                c++;
+                if (c == 4)
+                {
+                    k = aux_k;
+                    break;
+                }
+            }
+
+            if (matrix_labirinto[x + dx[k]][y + dy[k]] != 0)
+            {
+
+                x = x + dx[k];
+                y = y + dy[k];
+                matrix[x][y] = 1;
+
+                if (!visitados[x][y])
+                {
+                    visitados[x][y] = true;
+                }
+            }
+
+            if (matrix_labirinto[x][y] == 3)
+            {
+                break;
+            }
+        }
+
+        for (int i = 0; i < matrix.size(); i++)
+        {
+            for (int j = 0; j < matrix[0].size(); j++)
+            {
+                printf("%d ", matrix[i][j]);
+            }
+            printf("\n");
+        }
+
+
 
     /*
         print_cromossomo(p1);

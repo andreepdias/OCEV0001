@@ -217,42 +217,63 @@ void Dominio_Inteiro::labirinto(){
         int celulas_validas = 0, celulas_invalidas = 0, celulas_diferentes = 0;
         int x = 10, y = 1;
         bool celula_final = false;
-        int numero_movimentos = 100;
+        int numero_movimentos = tamanho_cromossomo;
 
         vector<vector<bool> > visitados(sx, vector<bool> (sy, false));
         visitados[x][y] = true;
 
         double fitness_movimentos = 1.0;
+        pair<int, int> anterior = make_pair(10, 1);
 
         for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
             int k = (*individuos)[i][j];
-            if(isValid(x + dx[k], y + dy[k], sx, sy)){
 
-                if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0){
-                    celulas_validas++;
-                    x = x + dx[k];
-                    y = y + dy[k];
-
-                    if(!visitados[x][y]){
-                        visitados[x][y] = true;
-                        celulas_diferentes++;
+            int c = 0, aux_k = 0;
+            while(matrix_labirinto[x + dx[k]][y + dy[k]] == 0){
+                k = (k + 1) % 4;
+                if (matrix_labirinto[x + dx[k]][y + dy[k]] != 0){
+                    if (!visitados[x + dx[k]][y + dy[k]]){
+                        break;                        
+                    }else{
+                        aux_k = k;
                     }
+                }
+                c++;
+                if(c == 4){
+                    k = aux_k;
+                    break;
                 }
             }
 
+            if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0 ){
+                celulas_validas++;
+
+                x = x + dx[k];
+                y = y + dy[k];
+
+                if(!visitados[x][y]){
+                    visitados[x][y] = true;
+                    celulas_diferentes++;
+                }
+            }
+            
             if(matrix_labirinto[x][y] == 3){
                 celula_final = true;
                 numero_movimentos = j + 1;
                 break;
             }
         }
+        double distancia = 1 - x + 20  - y;
         celulas_invalidas = numero_movimentos - celulas_validas;
 
         (*funcoes_objetivo)[i] = celulas_diferentes;
         (*infracoes)[i] = celulas_invalidas;
-        (*fitness)[i] = celulas_diferentes / (numero_movimentos + pow(celulas_invalidas, 2));
+        (*fitness)[i] = (celulas_diferentes / (numero_movimentos + pow(celulas_invalidas, 2)));
+        //  * 0.6 + (1.0 - (distancia / 55.0)) * 0.4;
     }
+
 }
+
 
 vector<pair<string, double>> Dominio_Inteiro::calcula_variaveis_labirinto(int indice)
 {
@@ -303,19 +324,43 @@ vector<pair<string, double>> Dominio_Inteiro::calcula_variaveis_labirinto(int in
 
     int x = 10, y = 1;
     matrix[x][y] = 1;
+    vector<vector<bool>> visitados(sx, vector<bool>(sy, false));
+    visitados[x][y] = true;
+    for(int j = 0; j < tamanho_cromossomo; j++){ // percorre todas as rainha de uma solução
+            int k = (*individuos)[indice][j];
 
-    for (int j = 0; j < tamanho_cromossomo; j++){
-        int k = (*individuos)[indice][j];
-        if (isValid(x + dx[k], y + dy[k], sx, sy))
-        {
-            if (matrix_labirinto[x + dx[k]][y + dy[k]] != 0)
-            {
+            int c = 0, aux_k = 0;
+            while(matrix_labirinto[x + dx[k]][y + dy[k]] == 0){
+                k = (k + 1) % 4;
+                if (matrix_labirinto[x + dx[k]][y + dy[k]] != 0){
+                    if (!visitados[x + dx[k]][y + dy[k]]){
+                        break;                        
+                    }else{
+                        aux_k = k;
+                    }
+                }
+                c++;
+                if(c == 4){
+                    k = aux_k;
+                    break;
+                }
+            }
+
+            if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0 ){
+
                 x = x + dx[k];
                 y = y + dy[k];
                 matrix[x][y] = 1;
+
+                if(!visitados[x][y]){
+                    visitados[x][y] = true;
+                }
+            }
+            
+            if(matrix_labirinto[x][y] == 3){
+                break;
             }
         }
-    }
 
     for(int i = 0; i < matrix.size(); i++){
         for(int j = 0; j < matrix[0].size(); j++){
