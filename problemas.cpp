@@ -245,7 +245,7 @@ void Dominio_Inteiro::labirinto(){
                 }
             }
 
-            if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0 ){
+            if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0 and !visitados[x + dx[k]][y + dy[k]]){
                 celulas_validas++;
 
                 x = x + dx[k];
@@ -346,7 +346,7 @@ vector<pair<string, double>> Dominio_Inteiro::calcula_variaveis_labirinto(int in
                 }
             }
 
-            if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0 ){
+            if(matrix_labirinto[x + dx[k]][y + dy[k]] != 0 and !visitados[x + dx[k]][y + dy[k]]){
 
                 x = x + dx[k];
                 y = y + dy[k];
