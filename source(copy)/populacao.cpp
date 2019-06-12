@@ -102,8 +102,6 @@ public:
         d = p.d;
         cout << "   ---   D: " << d << endl;
         c = p.c;
-        
-        draw = p.DRAW;
 
         execucoes = p.RUN;
 
@@ -498,60 +496,9 @@ public:
     void selecao_vizinhanca();
 
     void bit_flip();
-
-    // void crossover_n_cortes_bin(int qtd_pontos_corte);
-    // void crossover_uniforme_bin();
     
 
 };
 
 #endif
-   /*
-    void drawQueens(sf::RenderWindow &window, int indice){
-        sf::RectangleShape blank(sf::Vector2f(WINDOW_SIZE, WINDOW_SIZE));
-        sf::RectangleShape item(sf::Vector2f(WINDOW_SIZE / (double) tamanho_cromossomo, WINDOW_SIZE / (double) tamanho_cromossomo));
-        sf::RectangleShape lh (sf::Vector2f(WINDOW_SIZE * tamanho_cromossomo, 1));
-        sf::RectangleShape lv(sf::Vector2f(1, WINDOW_SIZE));
-        
-        blank.setFillColor(sf::Color(255, 255, 255));
-        blank.setPosition(0, 0);
-        window.draw(blank);
-
-        for(int i = 0; i < tamanho_cromossomo; i++){
-            int y = i;
-            int x = (*melhor_individuo_inteiro_permutado)[i];
-
-            if((*posicao_infracao)[tamanho_cromossomo][i]){
-                item.setFillColor(sf::Color(255, 0, 0));
-            }else{
-                item.setFillColor(sf::Color(0, 255, 0));
-            }
-
-            item.setPosition(WINDOW_SIZE * x / (double)tamanho_cromossomo, WINDOW_SIZE * y / (double) tamanho_cromossomo);
-            window.draw(item);
-
-            lv.setFillColor(sf::Color(175, 175, 175));
-            lv.setPosition(WINDOW_SIZE * i / (double)tamanho_cromossomo, 0);
-            window.draw(lv);
-
-            lh.setFillColor(sf::Color(175, 175, 175));
-            lh.setPosition(0, WINDOW_SIZE * i / (double)tamanho_cromossomo);
-            window.draw(lh);
-        }
-        window.display();
-    }
-    */
-
-    // void Fitness(int k, ofstream out[], int gen, sf::RenderWindow &window){
-
-        /*
-            if(draw){
-                sf::Event event;
-                while (window.pollEvent(event))
-                {
-                    if (event.type == sf::Event::Closed)
-                        window.close();
-                }
-                drawQueens(window, indice_melhor);
-            }
-            */
+ 

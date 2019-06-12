@@ -11,18 +11,12 @@ void Dominio_Binario::crossover_n_cortes_bin(int qtd_pontos_corte){
 
     for(int i = 0; i < tamanho_populacao; i += 2)
     {
-        /*
-        print_cromossomo(i);
-        print_cromossomo(i + 1);
-        */
-        for(int j = 0; j < qtd_pontos_corte; j++)
-        {
+        for(int j = 0; j < qtd_pontos_corte; j++){
             int ponto_corte_aleatorio;
-            do
-            {
+            do{
                 ponto_corte_aleatorio = distribution(engine);
 
-            } while (indices_ponto_corte.find(ponto_corte_aleatorio) != indices_ponto_corte.end());
+            }while (indices_ponto_corte.find(ponto_corte_aleatorio) != indices_ponto_corte.end());
             indices_ponto_corte[ponto_corte_aleatorio] = true;
             cortes_ordenados.push_back(ponto_corte_aleatorio);
         }        
@@ -36,10 +30,8 @@ void Dominio_Binario::crossover_n_cortes_bin(int qtd_pontos_corte){
         }
         printf("\n");
         */
-        for(int j = 0; j < qtd_pontos_corte; j += 2)
-        {
-            for(int k = cortes_ordenados[j]; k < cortes_ordenados[j + 1]; k++)
-            {
+        for(int j = 0; j < qtd_pontos_corte; j += 2){
+            for(int k = cortes_ordenados[j]; k < cortes_ordenados[j + 1]; k++){
                 bool aux = (*individuos)[i][k];
                 (*individuos)[i][k] = (*individuos)[i + 1][k];
                 (*individuos)[i + 1][k] = aux;

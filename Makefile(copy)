@@ -1,0 +1,2 @@
+build:
+	g++ source/parametros.cpp source/relatorio.cpp source/populacao.cpp source/dominios.cpp source/selecoes.cpp source/crossover.cpp source/mutacao.cpp source/problemas.cpp  source/main.cpp -o s -fopenmp -O3

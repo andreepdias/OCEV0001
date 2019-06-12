@@ -1,11 +1,3 @@
-/*
-indivudos
-50 ~ 100
-
-crossover
-*/
-
-// -lsfml-graphics -lsfml-window -lsfml-system
 #ifndef __MAIN_CPP
 #define __MAIN_CPP
 
@@ -19,36 +11,29 @@ void print_relatorio(Relatorio &r, int g, int gg);
 
 int main(int argc, char const *argv[])
 {
-
-    if (argc < 2)
-    {
+    if (argc < 2){
         printf("%s <arquivo_parametros>\n", argv[0]);
     }
 
+    /* Carrega arquivo de parâmetros */
     Parametros parametros;
     string r = parametros.carregar_parametros(argv[1]);
-    if (r.size() > 0)
-    {
-        cout << r << endl;
+    if (r.size() > 0){
+        printf("%s\n", r);
         return 1;
     }
-    /*
-    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "NQueens"); 
-    if(!parametros.DRAW){
-        window.close();
-    }
-    */
 
+    /* Declara vetor de arquivos de saída */
     ofstream graficos[parametros.RUN + 1];
     ofstream diversidade[parametros.RUN + 1];
 
-    vector<Relatorio> relatorios(parametros.RUN);
-    Populacao populacao(parametros);
 
+    vector<Relatorio> relatorios(parametros.RUN);
+
+    Populacao populacao(parametros);
     double maior_diversidade = 0;
 
-    for (int k = 0; k < parametros.RUN; k++)
-    {
+    for (int k = 0; k < parametros.RUN; k++){
         string s = "tempos_" + to_string(k + 1);
         graficos[k].open(s.c_str());
         graficos[parametros.RUN].open("tempos");
@@ -61,17 +46,14 @@ int main(int argc, char const *argv[])
         for (int i = 0; i < parametros.GEN; i++)
         {
             populacao.Fitness(k, graficos, i);
-            // populacao.print_populacao();
-    //         populacao.calcula_diversidade(i, diversidade, k, maior_diversidade);
             populacao.selecao();
             populacao.crossover();
-            // populacao.mutation();
+            populacao.mutation();
         }
         populacao.Fitness(parametros.GEN, graficos, k);
-    //     populacao.calcula_diversidade(parametros.GEN, diversidade, k, maior_diversidade);
+        //populacao.calcula_diversidade(parametros.GEN, diversidade, k, maior_diversidade);
 
         relatorios[k] = populacao.relatorio_execucao();
-
         print_relatorio(relatorios[k], k + 1, parametros.RUN);
 
         graficos[k].close();
@@ -80,18 +62,6 @@ int main(int argc, char const *argv[])
 
     // grafico_convergencia(parametros, maior_diversidade);
     relatorio_fim_execucoes(parametros, relatorios);
-
-    /*
-if(parametros.DRAW){
-    bool pressed = false;
-    while(pressed == false){
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-            pressed = true;
-        }
-    }
-    window.close();
-}
-*/
 }
 
 void print_relatorio(Relatorio & r, int g, int gg)

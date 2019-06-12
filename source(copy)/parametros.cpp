@@ -30,8 +30,6 @@ public:
 
     int PROBLEM;
 
-    int DRAW = 0;
-
     int PLOT_INTERVAL;
 
     string carregar_parametros(string arquivo){
@@ -209,14 +207,6 @@ public:
                 }else{
                     retorno += "Problema nao encontrado.\n";
                 }
-            }else if(k == "DRAW"){
-                printf("Draw:\n");
-                if(v == "1"){
-                    DRAW = 1;
-                }else{
-                    DRAW = 0;
-                }
-                printf("\t%d\n", DRAW);
             }else if(k == "PLOT-INTERVAL"){
                 printf("Plot-Interval:\n");
                 PLOT_INTERVAL = stoi(v);
