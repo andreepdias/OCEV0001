@@ -29,7 +29,7 @@ public:
     int torneio_k; double torneio_kp;
     int vizinhanca_t, vizinhanca_d;
 
-    int c;
+    int ncortes_c;
 
     int intervalo_plot;
 
@@ -147,8 +147,8 @@ public:
                     }
                     int x;
                     arquivo_parametros >> x;
-                    c = x;
-                    printf("\tNCortes\tc:%d\n", c);
+                    ncortes_c = x;
+                    printf("\tNCortes\tc:%d\n", ncortes_c);
                 }else if(v == "UNIFORME"){
                     if(tipo_variavel == 0){
                         tipo_crossover = 33;

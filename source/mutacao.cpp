@@ -20,10 +20,10 @@ public:
 
     void mutacao(){
         switch((*p).tipo_mutacao){
-            case BIT_FLIP:          break;
-            case DELTA:             break;
-            case SWAP:      swap(); break;
-            case INTEIRA:           break;
+            case BIT_FLIP:              break;
+            case DELTA:                 break;
+            case SWAP:      swap();     break;
+            case INTEIRA:   inteira();  break;
         }
     }
 
@@ -34,14 +34,12 @@ public:
 
         mt19937 engine(random_device{}());
         
-
         #pragma omp parallel for schedule(dynamic)        
         for(int i = 0; i < (*p).tamanho_populacao; i++){
-            vector<int> *c;
             double r;
             int g;
 
-            c = (vector<int>*)(*populacao).individuos[i].cromossomo;
+            vector<int> *c = (vector<int>*)(*populacao).individuos[i].cromossomo;
 
             for(int j = 0; j < (*p).tamanho_cromossomo; j++){
 
@@ -60,6 +58,32 @@ public:
             }
         }
 
+    }
+
+    void inteira(){
+        mt19937 engine(random_device{}());
+
+        uniform_real_distribution<double> distribution_real{0.0, 1.0};
+        uniform_int_distribution<int> distribution_int((*p).limite_inferior, (*p).limite_superior);
+        double r;
+        for (int i = 0; i < (*p).tamanho_populacao; i++)
+        {
+            vector<int> *c = (vector<int>*)(*populacao).individuos[i].cromossomo;
+
+            for (int j = 0; j < (*p).tamanho_cromossomo; j++)
+            {
+                r = distribution_real(engine);
+                if (r <= (*p).probabilidade_mutacao)
+                {
+                    int random;
+                    do{
+                        random = distribution_int(engine);
+                    }while(random == (*c)[j]);
+                    
+                    (*c)[j] = random;
+                }
+            }
+        }
     }
 
 };

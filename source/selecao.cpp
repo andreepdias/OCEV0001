@@ -35,9 +35,7 @@ public:
         uniform_int_distribution<int> distribution_int(0, (*p).tamanho_populacao - 1);
         uniform_int_distribution<int> distribution_int_k(1, (*p).torneio_k - 1);
 
-        #pragma omp parallel
-        #pragma omp for schedule(dynamic)
-
+        #pragma omp parallel for schedule(dynamic)
         for (int x = 0; x < (*p).tamanho_populacao; x++){
 
             vector<pair<double, int> > individuos_torneio((*p).torneio_k);
@@ -59,18 +57,11 @@ public:
             }
             sort(individuos_torneio.begin(), individuos_torneio.end());
 
-            /* printf("Torneio com: ");
-            for(auto &x : individuos_torneio){
-                cout << x.second << " ";
-            }
-            cout << '\n'; */
-
             rr = distribution_real(engine);
 
             if ((*p).torneio_kp >= rr){
                 int indice_individuo = individuos_torneio[(*p).torneio_k - 1].second;
                 (*populacao_intermediaria).individuos[x] = (*populacao).individuos[indice_individuo];
-                /* printf("Escolhido: %d\n", indice_individuo); */
             }else{
                 r = distribution_int_k(engine);
                 int indice_individuo = individuos_torneio[r].second;

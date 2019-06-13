@@ -271,7 +271,6 @@ void Dominio_Inteiro::labirinto(){
         (*fitness)[i] = (celulas_diferentes / (numero_movimentos + pow(celulas_invalidas, 2)));
         //  * 0.6 + (1.0 - (distancia / 55.0)) * 0.4;
     }
-
 }
 
 

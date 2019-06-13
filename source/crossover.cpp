@@ -20,9 +20,9 @@ public:
     void crossover(){
         switch((*p).tipo_crossover){
             case NCORTES_BINARIO: break;
-            case NCORTES_INTEIRO: break;
+            case NCORTES_INTEIRO: n_cortes_inteiro(); break;
             case UNIFORME_BINARIO: break;
-            case UNIFORME_INTEIRO: break;
+            case UNIFORME_INTEIRO: uniforme_inteiro(); break;
             case BLX: break;
             case ARITMETICO: break;
             case MEDIA_UNIFORME: break;
@@ -118,6 +118,66 @@ public:
                         key = matching_section_p2[key];
                     }
                     (*c1)[j] = key;
+                }
+            }
+        }
+    }
+
+    void n_cortes_inteiro(){
+        mt19937 engine(random_device{}());
+
+        uniform_int_distribution<int> distribution{1, (*p).tamanho_cromossomo - 1};
+
+        for(int i = 0; i < (*p).tamanho_populacao; i += 2)
+        {
+            vector<int> *c0 = (vector<int>*)(*populacao).individuos[i].cromossomo;
+            vector<int> *c1 = (vector<int>*)(*populacao).individuos[i + 1].cromossomo;
+
+            map<int, bool> indices_ponto_corte;
+            vector<int> cortes_ordenados;
+            for(int j = 0; j < (*p).ncortes_c; j++)
+            {
+                int ponto_corte_aleatorio;
+                do
+                {
+                    ponto_corte_aleatorio = distribution(engine);
+
+                } while (indices_ponto_corte.find(ponto_corte_aleatorio) != indices_ponto_corte.end());
+                indices_ponto_corte[ponto_corte_aleatorio] = true;
+                cortes_ordenados.push_back(ponto_corte_aleatorio);
+            }        
+            cortes_ordenados.push_back((*p).tamanho_cromossomo);
+            sort(cortes_ordenados.begin(), cortes_ordenados.end());
+
+            for(int j = 0; j < (*p).ncortes_c; j += 2)
+            {
+                for(int k = cortes_ordenados[j]; k < cortes_ordenados[j + 1]; k++)
+                {
+                    int aux = (*c0)[k];
+                    (*c0)[k] = (*c1)[k];
+                    (*c1)[k] = aux;
+                }
+            }
+        }
+    }
+
+    void uniforme_inteiro(){
+        mt19937 engine(random_device{}());
+
+        uniform_int_distribution<int> distribution{0, 1};
+
+        for(int i = 0; i < (*p).tamanho_populacao; i += 2)
+        {
+            vector<int> *c0 = (vector<int>*)(*populacao).individuos[i].cromossomo;
+            vector<int> *c1 = (vector<int>*)(*populacao).individuos[i + 1].cromossomo;
+
+            for(int j = 0; j < (*p).tamanho_cromossomo; j++)
+            {
+                int moeda = distribution(engine);
+                if(moeda){
+                    int aux = (*c0)[j];
+                    (*c0)[j] = (*c1)[j];
+                    (*c1)[j] = aux;
                 }
             }
         }

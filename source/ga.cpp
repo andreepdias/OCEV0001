@@ -38,14 +38,12 @@ public:
         selecao = Selecao(p, populacao, populacao_intermediaria);
         crossover = Crossover(p, populacao_intermediaria);
         mutacao = Mutacao(p, populacao_intermediaria);
-
         (*populacao).gerar_populacao_aleatoria();
     }
 
     void loop_evolutivo(){
         for(int g = 0; g < (*p).numero_geracoes; g++){
             avaliacao.avaliacao();
-
 
             if((*p).elitismo and g > 0){
                 elitismo();
@@ -89,7 +87,7 @@ public:
 
         double alpha = 0, beta = 0;
 
-        double c = ((double(g) / ((*p).numero_execucoes - 1)) * 0.8) + 1.2;
+        double c = ((double(g) / ((*p).numero_geracoes - 1)) * 0.8) + 1.2;
         
         bool isFminGreater = false;
 
