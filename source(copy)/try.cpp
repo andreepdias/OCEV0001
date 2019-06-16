@@ -7,13 +7,41 @@ typedef vector<vi> vvi;
 
 int main()
 {
-    while(true){
-        printf("validas numero invalidas distancia\n");
-        int a, b, c, d;
-        cin >> a >> b >> c >> d;
-        int celulas_validas = a, numero_movimentos = b, celulas_invalidas = c, distancia = d;
-        double f = (double(celulas_validas) / (numero_movimentos + celulas_invalidas)) * (1.0 - (double(distancia) / 55));
-        cout << f << endl;
+
+    double x = 10.0;
+    double a = 0.0, b = 1.0, c = 0.0;
+
+    for(int i = 1; i <= 50; i++){
+        a += pow(cos(0), 4);
     }
+    for(int i = 1; i <= 50; i++){
+        b *= pow(cos(0), 2);
+    }
+    b *= 2;
+
+    for(int i = 1; i <= 50; i++){
+        c += i * pow(0, 2);
+    }
+    c = sqrt(c);
+    if(c == 0) c = DBL_EPSILON;
+
+    double f = abs(a - b) / c;
+
+    printf("a: %lf b: %lf c: %lf\tfx: %lf\n", a, b, c, f);
+
+    double r1 = 1.0;
+    for(int i = 1; i <= 50; i++){
+        r1 *= x;
+    }
+
+    printf("r1: %lf\n", r1);
+
+    double r2 = 0.0;
+    for(int i = 1; i <= 50; i++){
+        r2 += x;
+    }
+
+    printf("r2: %lf\n", r2);
+
 
 }

@@ -12,6 +12,8 @@ public:
     vector<Individuo> individuos;
     Individuo melhor_individuo;
 
+    int geracao;
+
     Populacao(Parametros *_p){
         p = _p;
 
@@ -19,6 +21,7 @@ public:
             individuos.push_back(Individuo(_p));
         }
         melhor_individuo = individuos[0];
+        geracao = 0;
     }
     ~Populacao(){
         for(int i = 0; i < (*p).tamanho_populacao; i++){

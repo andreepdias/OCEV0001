@@ -121,7 +121,8 @@ public:
         }
     }
 
-    void labirinto(){
+    void labirinto()
+    {
 
         if((*p).fix){
             fix_individuos_labirinto();
@@ -200,7 +201,8 @@ public:
         }
     }
 
-    void fix_individuos_labirinto(){
+    void fix_individuos_labirinto()
+    {
         
         mt19937 engine(random_device{}());
         uniform_int_distribution<int> distribution((*p).limite_inferior, (*p).limite_superior);
@@ -212,7 +214,7 @@ public:
         int sx = (*matrix_labirinto).size();
         int sy = (*matrix_labirinto)[0].size();
 
-        for(int i = 0;  i< (*p).tamanho_populacao; i++){ 
+        for(int i = 0;  i < (*p).tamanho_populacao; i++){ 
             
             int x = 10, y = 1;
             vector<int> *c = (vector<int>*)(*populacao).individuos[i].cromossomo;
@@ -237,7 +239,8 @@ public:
         }
     }
 
-    void carregar_dados_problema(){
+    void carregar_dados_problema()
+    {
         switch((*p).problema){
             case LABIRINTO:
                 dados_problema = (void*)new vector<vector<int> > (30, vector<int> (25));
@@ -245,7 +248,9 @@ public:
                 break;
         }
     }
-    void montar_labirinto(){
+
+    void montar_labirinto()
+    {
 
         vector<vector<int> > *matrix_labirinto = (vector<vector<int> >*)dados_problema;
 
@@ -283,15 +288,20 @@ public:
         };
     }
 
-    void print_individiduo(){
+    void print_melhor_individiduo()
+    {
         switch((*p).problema){
             case LABIRINTO:
-                print_individuo_labirinto();
+                print_melhor_individuo_labirinto();
+                break;
+            case KEANES:
+                print_melhor_individuo_keanes();
                 break;
         }
     }
 
-    void print_individuo_labirinto(){
+    void print_melhor_individuo_labirinto()
+    {
         
         vector<vector<int> > *matrix_labirinto = (vector<vector<int> >*)dados_problema;
 
@@ -300,38 +310,9 @@ public:
         int sx = (*matrix_labirinto).size();
         int sy = (*matrix_labirinto)[0].size();
 
-        /*
-        int x = 10, y = 1;
-
-        vector<vector<int> > matrix_individuo (sx, vector<int> (sy, 0));
-        matrix_individuo[x][y] = 1;
-
-        vector<vector<bool> > visitados(sx, vector<bool>(sy, false));
-        visitados[x][y] = true;
-
-        int diferentes = 0;
-        vector<int> *c = (vector<int>*)(*populacao).melhor_individuo.cromossomo;
-        for(int i = 0; i < (*p).tamanho_cromossomo; i++){
-
-            int k = (*c)[i];
-
-            
-            if((*matrix_labirinto)[x + dx[k]][y + dy[k]] != 0){
-                x = x + dx[k];
-                y = y + dy[k];
-                matrix_individuo[x][y] = 1;
-            
-                if(!visitados[x][y]){
-                    visitados[x][y] = true;
-                    diferentes++;
-                }
-            }
-        }
-         */
-
         vector<vector<int> > *d = (vector<vector<int>>*)(*populacao).melhor_individuo.dados_individuo;
 
-        printf("fitess: %.5lf   validas: %d    invalidas: %d    diferentes: %d    movimentos: %d    distancia: %d\n", 
+        printf("fitness: %.5lf   validas: %d    invalidas: %d    diferentes: %d    movimentos: %d    distancia: %d\n", 
                 (*populacao).melhor_individuo.fitness, 
                 (*d)[29][0], 
                 (*d)[29][1], 
@@ -354,20 +335,96 @@ public:
             }
             printf("\n");
         }
+    }
 
-        /*
-        for(int j = 0; j < sx; j++){
-            for(int k = 0; k < sy; k++){
-                if(visitados[j][k]){
-                    printf("v ");
-                }else{
-                    printf(". ");
-                }
+    void print_melhor_individuo_keanes()
+    {
+        vector<double> *d = (vector<double>*)(*populacao).melhor_individuo.dados_individuo;
+
+        printf("fitness: %.5lf   f: %.5lf    r1: %.5lf(%lf)    r2: %.5lf(%.5lf)\n", 
+                (*populacao).melhor_individuo.fitness, 
+                (*d)[0], 
+                (*d)[1], 
+                (*d)[3], 
+                (*d)[2], 
+                (*d)[4]);
+    }
+
+    void michaelewicz(){
+
+        for(int x = 0; x < (*p).tamanho_populacao; x++){
+
+            double fitness = 0;
+            vector<double> *c = (vector<double>*)(*populacao).individuos[x].cromossomo;
+
+            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+                fitness += sin((*c)[i]) * pow(sin((i * pow((*c)[i], 2)) / M_PI), 2 * 10);
             }
-            printf("\n");
+            (*populacao).individuos[x].fitness = fitness;
         }
-        printf("\ndiferentes: %d\n", diferentes);
-         */
+    }
+
+    void keanes(){
+
+        for(int k = 0; k < (*p).tamanho_populacao; k++){
+
+            vector<double> *cromossomo = (vector<double>*)(*populacao).individuos[k].cromossomo;
+            vector<double> *dados_individuo = (vector<double>*)(*populacao).individuos[k].dados_individuo;
+
+            double a = 0.0, b = 1.0, c = 0.0, x;
+
+            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+                x = (*cromossomo)[i];
+                a += pow(cos(x), 4);
+            }
+            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+                x = (*cromossomo)[i];
+                b *= pow(cos(x), 2);
+            }
+            b *= 2;
+
+            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+                x = (*cromossomo)[i];
+                c += i * pow(x, 2);
+            }
+            c = sqrt(c);
+            if(c == 0) c = DBL_EPSILON;
+
+            double f = abs(a - b) / c;
+
+            double r1 = 1.0;
+            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+                x = (*cromossomo)[i];
+                r1 *= x;
+            }
+
+            double r2 = 0.0;
+            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+                r2 += x;
+            }
+
+            double pr1 = 1.0, pr2 = 1.0;
+            if(r1 <= 0.75){
+                pr1 = (r1 / (0.75 + 0.0000000001));
+                f = f * pr1;
+            }
+            
+            double max = (*p).tamanho_cromossomo * (*p).limite_superior;
+            double m = ((15.0 * double((*p).tamanho_cromossomo)) / 2.0) - 0.0000000001;
+            if(r2 >= max){
+                pr2 = (1 - ((r1 - m) / (max - m)));
+                f = f * pr2;
+            }
+
+            (*populacao).individuos[k].fitness = f;
+            
+            (*dados_individuo)[0] = f;
+            (*dados_individuo)[1] = r1;
+            (*dados_individuo)[2] = r2;
+            (*dados_individuo)[3] = pr1;
+            (*dados_individuo)[4] = pr2;
+        }
+
     }
 
 

@@ -22,12 +22,12 @@ public:
         switch((*p).tipo_mutacao){
             case BIT_FLIP:              break;
             case DELTA:                 break;
-            case SWAP:      swap();     break;
-            case INTEIRA:   inteira();  break;
+            case SWAP:      inteiro_permutado_swap();     break;
+            case INTEIRA:   inteiro_inteira();  break;
         }
     }
 
-    void swap()
+    void inteiro_permutado_swap()
     {
         uniform_real_distribution<double> distribution_real{0.0, 1.0};
         uniform_int_distribution<int> distribution_int(0, (*p).tamanho_cromossomo - 1);
@@ -60,7 +60,7 @@ public:
 
     }
 
-    void inteira(){
+    void inteiro_inteira(){
         mt19937 engine(random_device{}());
 
         uniform_real_distribution<double> distribution_real{0.0, 1.0};

@@ -158,6 +158,9 @@ public:
             case LABIRINTO:
                 copy_dados_individuo_labirinto(i);
                 break;
+            case KEANES:
+                copy_dados_individuo_keanes(i);
+                break;
         }
     }
 
@@ -188,6 +191,9 @@ public:
             case LABIRINTO:
                 dados_individuo = (void*)new vector<vector<int> > (30, vector<int> (30, -1));
                 break;
+            case KEANES:
+                dados_individuo = (void*)new vector<double> (5, 0);
+                break;
         }
     }
 
@@ -199,6 +205,15 @@ public:
             for(int j = 0; j < (*d2)[0].size(); j++){
                 (*d1)[i][j] = (*d2)[i][j];
             }
+        }
+    }
+
+    void copy_dados_individuo_keanes(const Individuo &i){
+        vector<double> *d1 = (vector<double>*)dados_individuo;
+        vector<double> *d2 = (vector<double>*)i.dados_individuo;
+
+        for(int i = 0; i < (*d2).size(); i++){
+            (*d1)[i] = (*d2)[i];
         }
     }
     

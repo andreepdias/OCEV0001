@@ -22,6 +22,8 @@ using namespace std;
 #define RADIOS 12
 #define RAINHAS_LUCRO 13
 #define LABIRINTO 14
+#define MICHALEWICZ 15
+#define KEANES 16
 
 #define ROLETA 21
 #define RANKING 22

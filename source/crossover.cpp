@@ -20,17 +20,17 @@ public:
     void crossover(){
         switch((*p).tipo_crossover){
             case NCORTES_BINARIO: break;
-            case NCORTES_INTEIRO: n_cortes_inteiro(); break;
+            case NCORTES_INTEIRO: inteiro_n_cortes(); break;
             case UNIFORME_BINARIO: break;
-            case UNIFORME_INTEIRO: uniforme_inteiro(); break;
+            case UNIFORME_INTEIRO: inteiro_uniforme(); break;
             case BLX: break;
             case ARITMETICO: break;
             case MEDIA_UNIFORME: break;
-            case PMX: pmx(); break;
+            case PMX: inteiro_permutado_pmx(); break;
         }
     }
 
-    void pmx(){
+    void inteiro_permutado_pmx(){
 
         auto printIndiv = [&](int k){
             vector<int> *c = (vector<int>*)(*populacao).individuos[k].cromossomo;
@@ -123,7 +123,7 @@ public:
         }
     }
 
-    void n_cortes_inteiro(){
+    void inteiro_n_cortes(){
         mt19937 engine(random_device{}());
 
         uniform_int_distribution<int> distribution{1, (*p).tamanho_cromossomo - 1};
@@ -161,7 +161,7 @@ public:
         }
     }
 
-    void uniforme_inteiro(){
+    void inteiro_uniforme(){
         mt19937 engine(random_device{}());
 
         uniform_int_distribution<int> distribution{0, 1};
@@ -179,6 +179,45 @@ public:
                     (*c0)[j] = (*c1)[j];
                     (*c1)[j] = aux;
                 }
+            }
+        }
+    }
+
+    void crossover_blx_real(double alpha = 0.5){
+        mt19937 engine(random_device{}());
+
+        for(int i = 0; i < (*p).tamanho_populacao; i += 2)
+        {
+            vector<double> *c0 = (vector<double>*)(*populacao).individuos[i].cromossomo;
+            vector<double> *c1 = (vector<double>*)(*populacao).individuos[i + 1].cromossomo;
+
+            for(int j = 0; j < (*p).tamanho_cromossomo; j++)
+            {
+                double maior_i = max((*c0)[j], (*c1)[j]);
+                double menor_i = min((*c0)[j], (*c1)[j]);
+                double d = maior_i - menor_i;
+                maior_i += d*alpha;
+                menor_i -= d*alpha;
+                uniform_real_distribution<double> distribution{menor_i, maior_i};
+                (*c0)[j] = distribution(engine);
+                (*c1)[j] = distribution(engine);
+            }
+        }
+    }
+
+    void crossover_aritmetico_real(double alpha = 0.5){
+
+        for(int i = 0; i < (*p).tamanho_populacao; i += 2)
+        {
+            vector<double> *c0 = (vector<double>*)(*populacao).individuos[i].cromossomo;
+            vector<double> *c1 = (vector<double>*)(*populacao).individuos[i + 1].cromossomo;
+            
+            for(int j = 0; j < (*p).tamanho_cromossomo; j++)
+            {
+                double ind_temp_1 = alpha * (*c0)[j] + (1 - alpha) * (*c1)[j];
+                double ind_temp_2 = (1 - alpha) * (*c0)[j] + alpha * (*c1)[j];
+                (*c0)[j] = ind_temp_1;
+                (*c1)[j] = ind_temp_2;
             }
         }
     }

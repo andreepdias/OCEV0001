@@ -144,6 +144,19 @@ void Populacao::crossover_blx_real(double alpha = 0.5){
     }
 }
 
+void Populacao::crossover_aritmetico_real(double alpha = 0.5){
+    for(int i = 0; i < tamanho_populacao; i += 2)
+    {
+        for(int j = 0; j < tamanho_cromossomo; j++)
+        {
+            double ind_temp_1 = alpha * individuos_real[i][j] + (1 - alpha) * individuos_real[i + 1][j];
+            double ind_temp_2 = (1 - alpha) * individuos_real[i][j] + alpha * individuos_real[i + 1][j];
+            individuos_real[i][j] = ind_temp_1;
+            individuos_real[i + 1][j] = ind_temp_2;
+        }
+    }
+}
+
 void Populacao::crossover_media_uniforme_real(){
 
     uniform_int_distribution<int> distribution{0, 1};
@@ -163,18 +176,6 @@ void Populacao::crossover_media_uniforme_real(){
     }
 }
 
-void Populacao::crossover_aritmetico_real(double alpha = 0.5){
-    for(int i = 0; i < tamanho_populacao; i += 2)
-    {
-        for(int j = 0; j < tamanho_cromossomo; j++)
-        {
-            double ind_temp_1 = alpha * individuos_real[i][j] + (1 - alpha) * individuos_real[i + 1][j];
-            double ind_temp_2 = (1 - alpha) * individuos_real[i][j] + alpha * individuos_real[i + 1][j];
-            individuos_real[i][j] = ind_temp_1;
-            individuos_real[i + 1][j] = ind_temp_2;
-        }
-    }
-}
 */
 void Dominio_Inteiro_Permutado::crossover_pmx_intp()
 {
