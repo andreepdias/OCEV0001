@@ -20,6 +20,12 @@ public:
         }
         melhor_individuo = individuos[0];
     }
+    ~Populacao(){
+        for(int i = 0; i < (*p).tamanho_populacao; i++){
+            free(individuos[i].cromossomo);
+            free(individuos[i].dados_individuo);
+        }
+    }
 
     void  gerar_populacao_aleatoria(){
         mt19937 engine(random_device{}());

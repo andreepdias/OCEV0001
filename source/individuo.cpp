@@ -14,6 +14,7 @@ public:
     double infracao;
 
     void *cromossomo = NULL;
+    void *dados_individuo = NULL;
 
     Individuo(){}
     Individuo(Parametros *_p){
@@ -23,11 +24,12 @@ public:
         funcao_objetivo = 0;
         infracao = 0;
 
-        criar_cromossomo(cromossomo);
+        criar_cromossomo();
+        criar_dados_individuo();
         
     }
 
-    void criar_cromossomo(void *&cromossomo){
+    void criar_cromossomo(){
         switch((*p).tipo_variavel){
             case BINARIO:
                 cromossomo = (void*)new vector<bool>((*p).tamanho_cromossomo);
@@ -131,7 +133,8 @@ public:
 
         if(cromossomo == NULL){
             p = i.p;
-            criar_cromossomo(cromossomo);
+            criar_cromossomo();
+            criar_dados_individuo();
         }
 
         fitness = i.fitness;
@@ -148,6 +151,12 @@ public:
                 break;
             case REAL: 
                 copy_cromossomo_real(i); 
+                break;
+        }
+
+        switch((*p).problema){
+            case LABIRINTO:
+                copy_dados_individuo_labirinto(i);
                 break;
         }
     }
@@ -173,6 +182,26 @@ public:
             (*c1)[i] = (*c2)[i];
         }
     }
+
+    void criar_dados_individuo(){
+        switch((*p).problema){
+            case LABIRINTO:
+                dados_individuo = (void*)new vector<vector<int> > (30, vector<int> (30, -1));
+                break;
+        }
+    }
+
+    void copy_dados_individuo_labirinto(const Individuo &i){
+        vector<vector<int> > *d1 = (vector<vector<int> > *)dados_individuo;
+        vector<vector<int> > *d2 = (vector<vector<int> >*)i.dados_individuo;
+
+        for(int i = 0; i < (*d2).size(); i++){
+            for(int j = 0; j < (*d2)[0].size(); j++){
+                (*d1)[i][j] = (*d2)[i][j];
+            }
+        }
+    }
+    
 
 };
 

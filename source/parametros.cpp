@@ -33,6 +33,10 @@ public:
 
     int intervalo_plot;
 
+    bool fix;
+
+    double genereation_gap = 0.0;
+
     Parametros(){}
 
     string carregar_parametros(string arquivo){
@@ -224,6 +228,14 @@ public:
                 escalonamento_linear = stoi(v);
                 printf("Escalonamento linear:\n");
                 printf("\t%d\n", escalonamento_linear);
+            }else if(k == "FIX"){
+                fix = stoi(v);
+                printf("Fix:\n");
+                printf("\t%d\n", fix);
+            }else if(k == "GENERATIO-GAP"){
+                genereation_gap = stod(v);
+                printf("Generation Gap:\n");
+                printf("\t%.3lf\n", genereation_gap);
             }
         }
         return retorno;

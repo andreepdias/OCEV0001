@@ -1,10 +1,10 @@
 set xlabel "Generation" font "Helvetica, 12"
 set ylabel "Fitness" font "Helvetica, 12"
 set title "Labirinto" font "Helvetica, 15"
-set xrange [0:2500]
+set xrange [0:5000]
 set autoscale y
 set grid
-set xtics 250
+set xtics 500
 set ytics 0.05
 set key right bottom
 set key spacing 1.25

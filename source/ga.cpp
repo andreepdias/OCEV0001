@@ -1,4 +1,4 @@
-#ifndef __GA_CPP
+#ifndef __GA_CPP 
 #define __GA_CPP
 using namespace std;
 
@@ -49,18 +49,29 @@ public:
                 elitismo();
             }
 
+            if((g + 1) % (*p).intervalo_plot == 0){
+                printf("%d. ", g + 1);
+                atualizar_grafico_convergencia(g + 1);
+                avaliacao.print_individiduo();
+            }
+
             if((*p).escalonamento_linear){
                 escalonamento_linear(g);                
             }
 
-            atualizar_grafico_convergencia(g);
 
             selecao.selecao();
             crossover.crossover();
             mutacao.mutacao();
 
-            (*populacao) = (*populacao_intermediaria);
+            if((*p).genereation_gap > 0.0){
+                generation_gap();
+            }else{
+                (*populacao) = (*populacao_intermediaria);
+            }
         }
+        delete populacao;
+        delete populacao_intermediaria;
     }
     
     void elitismo(){
@@ -74,6 +85,7 @@ public:
         if(avaliacao.melhor_individuo.second > (*populacao).melhor_individuo.fitness){
             int indice_melhor = avaliacao.melhor_individuo.first;
             (*populacao).melhor_individuo = (*populacao).individuos[indice_melhor];
+            vector<vector<int> > *d = (vector<vector<int>>*)(*populacao).melhor_individuo.dados_individuo;
         }else{
             avaliacao.melhor_individuo.second = (*populacao).melhor_individuo.fitness;
         }
@@ -109,12 +121,18 @@ public:
     }
 
     void atualizar_grafico_convergencia(int g){
-        g += 1;
-        if(g % (*p).intervalo_plot == 0){
-            double melhor_fitness = ((*p).elitismo and g > 0) ? (*populacao).melhor_individuo.fitness : avaliacao.melhor_individuo.second;
-            printf("%d\t%.5lf\t%.5lf\t%.5lf\n",g, melhor_fitness, avaliacao.fitness_medio, avaliacao.pior_individuo.second);
-            (*a).grafico_convergencia[execucao_atual] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
-            (*a).grafico_convergencia[(*p).numero_execucoes] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
+        double melhor_fitness = ((*p).elitismo and g > 1) ? (*populacao).melhor_individuo.fitness : avaliacao.melhor_individuo.second;
+        // printf("%d\t%.5lf\t%.5lf\t%.5lf\n",g, melhor_fitness, avaliacao.fitness_medio, avaliacao.pior_individuo.second);
+        (*a).grafico_convergencia[execucao_atual] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
+        (*a).grafico_convergencia[(*p).numero_execucoes] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
+    }
+
+    void generation_gap(){
+
+        int gap = (int) ((*p).genereation_gap * (*p).tamanho_populacao);
+
+        for(int i = 0; i < gap; i++){
+            (*populacao).individuos[i] = (*populacao_intermediaria).individuos[i];
         }
     }
 

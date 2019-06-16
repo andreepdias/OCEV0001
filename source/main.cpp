@@ -28,6 +28,8 @@ int main(int argc, char const *argv[])
         GeneticAlgorithm ga(parametros, arquivos, k);
         ga.loop_evolutivo();
     }
+    free(parametros);
+    free(arquivos);
 }
 
 #endif
