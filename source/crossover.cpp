@@ -23,8 +23,8 @@ public:
             case NCORTES_INTEIRO: inteiro_n_cortes(); break;
             case UNIFORME_BINARIO: break;
             case UNIFORME_INTEIRO: inteiro_uniforme(); break;
-            case BLX: break;
-            case ARITMETICO: break;
+            case BLX:                real_blx(); break;
+            case ARITMETICO:         real_aritmetico(); break;
             case MEDIA_UNIFORME: break;
             case PMX: inteiro_permutado_pmx(); break;
         }
@@ -166,6 +166,7 @@ public:
 
         uniform_int_distribution<int> distribution{0, 1};
 
+        #pragma omp parallel for schedule(dynamic)
         for(int i = 0; i < (*p).tamanho_populacao; i += 2)
         {
             vector<int> *c0 = (vector<int>*)(*populacao).individuos[i].cromossomo;
@@ -183,9 +184,10 @@ public:
         }
     }
 
-    void crossover_blx_real(double alpha = 0.5){
+    void real_blx(double alpha = 0.5){
         mt19937 engine(random_device{}());
 
+        #pragma omp parallel for schedule(dynamic)
         for(int i = 0; i < (*p).tamanho_populacao; i += 2)
         {
             vector<double> *c0 = (vector<double>*)(*populacao).individuos[i].cromossomo;
@@ -201,12 +203,21 @@ public:
                 uniform_real_distribution<double> distribution{menor_i, maior_i};
                 (*c0)[j] = distribution(engine);
                 (*c1)[j] = distribution(engine);
+
+                (*c0)[j] = max((*p).limite_inferior, (*c0)[j]);
+                (*c0)[j] = min((*p).limite_superior, (*c0)[j]);
+                
+                (*c1)[j] = max((*p).limite_inferior, (*c1)[j]);
+                (*c1)[j] = min((*p).limite_superior, (*c1)[j]);
             }
         }
     }
 
-    void crossover_aritmetico_real(double alpha = 0.5){
+    void real_aritmetico(){
+        mt19937 engine(random_device{}());
+        uniform_real_distribution<double> distribution_real{0.0, 1.0};
 
+        #pragma omp parallel for schedule(dynamic)
         for(int i = 0; i < (*p).tamanho_populacao; i += 2)
         {
             vector<double> *c0 = (vector<double>*)(*populacao).individuos[i].cromossomo;
@@ -214,8 +225,9 @@ public:
             
             for(int j = 0; j < (*p).tamanho_cromossomo; j++)
             {
-                double ind_temp_1 = alpha * (*c0)[j] + (1 - alpha) * (*c1)[j];
-                double ind_temp_2 = (1 - alpha) * (*c0)[j] + alpha * (*c1)[j];
+                double alpha = distribution_real(engine);
+                double ind_temp_1 = alpha * (*c0)[j] + (1.0 - alpha) * (*c1)[j];
+                double ind_temp_2 = (1.0 - alpha) * (*c0)[j] + alpha * (*c1)[j];
                 (*c0)[j] = ind_temp_1;
                 (*c1)[j] = ind_temp_2;
             }

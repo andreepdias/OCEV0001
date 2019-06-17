@@ -126,7 +126,7 @@ public:
 
     void atualizar_grafico_convergencia(int g){
         double melhor_fitness = ((*p).elitismo and g > 1) ? (*populacao).melhor_individuo.fitness : avaliacao.melhor_individuo.second;
-        printf("gen: %d\tbest: %.5lf\tavg: %.5lf\tworst: %.5lf\n",g, melhor_fitness, avaliacao.fitness_medio, avaliacao.pior_individuo.second);
+        // printf("gen: %d\tbest: %.5lf\tavg: %.5lf\tworst: %.5lf\n",g, melhor_fitness, avaliacao.fitness_medio, avaliacao.pior_individuo.second);
         (*a).grafico_convergencia[execucao_atual] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
         (*a).grafico_convergencia[(*p).numero_execucoes] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
     }

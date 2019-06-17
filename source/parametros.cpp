@@ -15,7 +15,7 @@ public:
     double probabilidade_crossover;
     double probabilidade_mutacao;
 
-    int limite_inferior, limite_superior;
+    double limite_inferior, limite_superior;
 
     bool elitismo;
     
@@ -192,6 +192,9 @@ public:
                 }else if(v == "INTEIRA"){
                     tipo_mutacao = 44;
                     printf("\tInteira\n");
+                }else if(v == "MIKA"){
+                    tipo_mutacao = 45;
+                    printf("\tMichalewicz\n");
                 }else{
                     retorno += "Tipo de Mutacao nao encontrado\n";
                 }
@@ -211,6 +214,12 @@ public:
                 }else if(v == "LABIRINTO"){
                     problema = 14;
                     printf("\tLabirinto\n");
+                }else if(v == "MICHALEWICZ"){
+                    problema = 15;
+                    printf("\tMichalewicz\n");
+                }else if(v == "KEANES"){
+                    problema = 16;
+                    printf("\tKeanes\n");
                 }else{
                     retorno += "Problema nao encontrado.\n";
                 }
@@ -221,9 +230,20 @@ public:
             }else if(k == "LIMITES"){
                 string x;
                 arquivo_parametros >> x;
-                limite_inferior = stoi(v);
-                limite_superior = stoi(x);
-                printf("LIMITES: %d\t%d\n", limite_inferior, limite_superior);
+
+                if(v == "PI"){
+                    limite_inferior = M_PI;
+                }else{
+                    limite_inferior = stod(v);
+                }
+
+                if(x == "PI"){
+                    limite_superior = M_PI;
+                }else{
+                    limite_superior = stod(x);
+                }
+
+                printf("LIMITES: %lf\t%lf\n", limite_inferior, limite_superior);
             }else if(k == "ESCALONAMENTO"){
                 escalonamento_linear = stoi(v);
                 printf("Escalonamento linear:\n");

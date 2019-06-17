@@ -43,5 +43,6 @@ using namespace std;
 #define DELTA 42
 #define SWAP 43
 #define INTEIRA 44
+#define MIKA 45
 
 #endif

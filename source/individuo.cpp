@@ -91,7 +91,16 @@ public:
         vector<double> *c = (vector<double>*)cromossomo;
 
         for(int i = 0; i < (*p).tamanho_cromossomo; i++){
-            (*c)[i] = distribution(engine);
+
+            switch((*p).problema){
+                case KEANES:
+                    (*c)[i] = 5.0;
+                    break;
+                default:
+                    (*c)[i] = distribution(engine);
+                    break;
+            }
+
         }
     }
 

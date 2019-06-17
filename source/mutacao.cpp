@@ -20,10 +20,11 @@ public:
 
     void mutacao(){
         switch((*p).tipo_mutacao){
-            case BIT_FLIP:              break;
-            case DELTA:                 break;
-            case SWAP:      inteiro_permutado_swap();     break;
-            case INTEIRA:   inteiro_inteira();  break;
+            case BIT_FLIP:                                          break;
+            case DELTA:                                             break;
+            case SWAP:                  inteiro_permutado_swap();   break;
+            case INTEIRA:               inteiro_inteira();          break;
+            case MIKA: real_michalewicz();         break;
         }
     }
 
@@ -66,6 +67,8 @@ public:
         uniform_real_distribution<double> distribution_real{0.0, 1.0};
         uniform_int_distribution<int> distribution_int((*p).limite_inferior, (*p).limite_superior);
         double r;
+
+        #pragma omp parallel for schedule(dynamic)
         for (int i = 0; i < (*p).tamanho_populacao; i++)
         {
             vector<int> *c = (vector<int>*)(*populacao).individuos[i].cromossomo;
@@ -82,6 +85,44 @@ public:
                     
                     (*c)[j] = random;
                 }
+            }
+        }
+    }
+
+    void real_michalewicz(){
+        mt19937 engine(random_device{}());
+        uniform_real_distribution<double> distribution_real{0.0, 1.0};
+        uniform_int_distribution<int> distribution_int(0, 1);
+
+        auto delta = [&](double y, double a, double b) {
+            double t = (*populacao).geracao + 1;
+            double T = (*p).numero_geracoes;
+            return y * (1.0 - pow(a, (1.0 - (double(t) / T) ) * b) );
+        };
+
+        #pragma omp parallel for schedule(dynamic)
+        for(int i = 0; i < (*p).tamanho_populacao; i++){
+
+            vector<double> *c = (vector<double>*)(*populacao).individuos[i].cromossomo;
+
+            for(int j = 0; j < (*p).tamanho_cromossomo; j++){
+
+                int r = distribution_real(engine);
+                if(r <= (*p).probabilidade_crossover){
+
+                    double a = distribution_real(engine);
+                    double b = 5;
+
+                    int bit = distribution_int(engine);
+
+                    if(bit == 1){
+                        (*c)[j] = (*c)[j] + delta((*p).limite_superior - (*c)[j], a, b);
+                    }else{
+                        (*c)[j] = (*c)[j] - delta((*c)[j] - (*p).limite_inferior, a, b);
+                    }
+
+                }
+
             }
         }
     }

@@ -31,6 +31,8 @@ public:
             case RAINHAS_LUCRO: break;
             case RADIOS: break;
             case LABIRINTO:     labirinto(); break;
+            case MICHALEWICZ:   michaelewicz(); break;
+            case KEANES:        keanes(); break;
         }
 
         melhor_individuo.first = 0;
@@ -215,6 +217,7 @@ public:
         int sx = (*matrix_labirinto).size();
         int sy = (*matrix_labirinto)[0].size();
 
+        #pragma omp parallel for schedule(dynamic)
         for(int i = 0;  i < (*p).tamanho_populacao; i++){ 
             
             int x = 10, y = 1;
@@ -353,13 +356,14 @@ public:
 
     void michaelewicz(){
 
+        #pragma omp parallel for schedule(dynamic)
         for(int x = 0; x < (*p).tamanho_populacao; x++){
 
             double fitness = 0;
             vector<double> *c = (vector<double>*)(*populacao).individuos[x].cromossomo;
 
-            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
-                fitness += sin((*c)[i]) * pow(sin((i * pow((*c)[i], 2)) / M_PI), 2 * 10);
+            for(int i = 0; i < (*p).tamanho_cromossomo; i++){
+                fitness += sin((*c)[i]) * pow(sin(((i + 1) * pow((*c)[i], 2)) / M_PI), 2 * 10);
             }
             (*populacao).individuos[x].fitness = fitness;
         }
@@ -367,6 +371,7 @@ public:
 
     void keanes(){
 
+        #pragma omp parallel for schedule(dynamic)
         for(int k = 0; k < (*p).tamanho_populacao; k++){
 
             vector<double> *cromossomo = (vector<double>*)(*populacao).individuos[k].cromossomo;
@@ -374,19 +379,23 @@ public:
 
             double a = 0.0, b = 1.0, c = 0.0, x;
 
-            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+            for(int i = 0; i < (*p).tamanho_cromossomo; i++){
+
+                (*cromossomo)[i] = max(0.0000000001, (*cromossomo)[i]);
+                (*cromossomo)[i] = min(9.9999999999, (*cromossomo)[i]);
+
                 x = (*cromossomo)[i];
                 a += pow(cos(x), 4);
             }
-            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+            for(int i = 0; i < (*p).tamanho_cromossomo; i++){
                 x = (*cromossomo)[i];
                 b *= pow(cos(x), 2);
             }
             b *= 2;
 
-            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+            for(int i = 0; i < (*p).tamanho_cromossomo; i++){
                 x = (*cromossomo)[i];
-                c += i * pow(x, 2);
+                c += (i + 1) * pow(x, 2);
             }
             c = sqrt(c);
             if(c == 0) c = DBL_EPSILON;
@@ -394,13 +403,13 @@ public:
             double f = abs(a - b) / c;
 
             double r1 = 1.0;
-            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+            for(int i = 0; i < (*p).tamanho_cromossomo; i++){
                 x = (*cromossomo)[i];
                 r1 *= x;
             }
 
             double r2 = 0.0;
-            for(int i = 1; i <= (*p).tamanho_cromossomo; i++){
+            for(int i = 0; i < (*p).tamanho_cromossomo; i++){
                 r2 += x;
             }
 
@@ -413,7 +422,7 @@ public:
             double max = (*p).tamanho_cromossomo * (*p).limite_superior;
             double m = ((15.0 * double((*p).tamanho_cromossomo)) / 2.0) - 0.0000000001;
             if(r2 >= max){
-                pr2 = (1 - ((r1 - m) / (max - m)));
+                pr2 = (1.0 - ((r2 - m) / (max - m)));
                 f = f * pr2;
             }
 
