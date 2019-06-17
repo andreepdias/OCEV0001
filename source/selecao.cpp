@@ -22,7 +22,7 @@ public:
     void selecao(){
         switch((*p).tipo_selecao){
             case ROLETA: roleta(); break;
-            case RANKING: break;
+            case RANKING: ranking(); break;
             case TORNEIO: torneio(); break;
             case VIZINHANCA: break;
         }
@@ -120,6 +120,61 @@ public:
                     fitness_relativo[j] = (*populacao).individuos[j].fitness / somatorio_fitness_atual;
                 }
             }
+            soma_acumulada_roleta = 0;
+            random = distribution_real(engine);
+            for(int j = 0; j < (*p).tamanho_populacao; j++){
+                if(individuo_escolhido_roleta == j) continue;
+                double fitness = fitness_relativo[j];
+                if(fitness + soma_acumulada_roleta >= random){
+                    (*populacao_intermediaria).individuos[(x * 2) + 1] = (*populacao).individuos[j];
+                    break;
+                }
+                soma_acumulada_roleta += fitness;
+            }
+        }
+    }
+    
+    void ranking(){
+        mt19937 engine(random_device{}());
+
+        uniform_real_distribution<double> distribution_real{0.0, 1.0};
+
+        auto mysort = [](Individuo a, Individuo b){ return a.fitness < b.fitness; };
+
+        sort((*populacao).individuos.begin(), (*populacao).individuos.end(), mysort);
+        
+        double somatorio_fitness = double((*p).tamanho_populacao * ((*p).tamanho_populacao + 1)) / 2.0;
+
+        #pragma omp parallel for schedule(dynamic)
+        for(int x = 0; x < (*p).tamanho_populacao / 2; x++){
+
+            vector<double> fitness_relativo((*p).tamanho_populacao);
+            double somatorio_fitness_atual = somatorio_fitness;
+
+            for(int i = 1; i <= (*p).tamanho_populacao; i++){
+                fitness_relativo[i] = double(i) / somatorio_fitness;
+            }
+
+            double soma_acumulada_roleta = 0;
+            double random = distribution_real(engine);
+            int individuo_escolhido_roleta = 0;
+            for(int j = 0; j < (*p).tamanho_populacao; j++){
+                double fitness = fitness_relativo[j];
+                if(fitness + soma_acumulada_roleta >= random){
+                    (*populacao_intermediaria).individuos[x * 2] = (*populacao).individuos[j];
+                    individuo_escolhido_roleta = j;
+                    break;
+                }
+                soma_acumulada_roleta += fitness;
+            }
+
+            somatorio_fitness_atual = somatorio_fitness - (individuo_escolhido_roleta + 1);
+
+            for(int i = 1; i <= (*p).tamanho_populacao; i++){
+                if(i == (individuo_escolhido_roleta + 1)) continue;
+                fitness_relativo[i] = double(i) / somatorio_fitness;
+            }
+
             soma_acumulada_roleta = 0;
             random = distribution_real(engine);
             for(int j = 0; j < (*p).tamanho_populacao; j++){

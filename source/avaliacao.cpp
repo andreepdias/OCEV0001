@@ -137,7 +137,7 @@ public:
 
         #pragma omp parallel for schedule(dynamic)
         for(int i = 0;  i< (*p).tamanho_populacao; i++){ 
-            int celulas_validas = 0, celulas_invalidas = 0, celulas_diferentes = 1, celulas_repetidas = 0;
+            int celulas_validas = 0, celulas_invalidas = 0, celulas_diferentes = 0, celulas_repetidas = 0;
             int numero_movimentos = (*p).tamanho_cromossomo;
             double distancia = 0;
             bool celula_final = false;
@@ -185,7 +185,8 @@ public:
             }
             distancia = abs(x - 1) + abs(y - 20);
 
-            double fitness = (double(celulas_validas) / (numero_movimentos)) * (1.0 - (double(distancia) / 55)) * (double(celulas_diferentes) / numero_movimentos);
+            // double fitness = (double(celulas_validas) / (numero_movimentos)) * (1.0 - (double(distancia) / 55)) * (double(celulas_diferentes) / numero_movimentos);
+            double fitness = (1.0 - (double(distancia) / 55)) * (double(celulas_diferentes) / numero_movimentos) * (1.0 + (1.0 - (double(numero_movimentos) / (*p).tamanho_cromossomo)));
 
             (*populacao).individuos[i].funcao_objetivo = celulas_validas;
             (*populacao).individuos[i].infracao = celulas_invalidas;
