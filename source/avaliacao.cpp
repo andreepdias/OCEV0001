@@ -361,6 +361,7 @@ public:
 
             double fitness = 0;
             vector<double> *c = (vector<double>*)(*populacao).individuos[x].cromossomo;
+            
 
             for(int i = 0; i < (*p).tamanho_cromossomo; i++){
                 fitness += sin((*c)[i]) * pow(sin(((i + 1) * pow((*c)[i], 2)) / M_PI), 2 * 10);

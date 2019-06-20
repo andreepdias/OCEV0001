@@ -44,15 +44,17 @@ public:
     void loop_evolutivo(){
         for(int g = 0; g < (*p).numero_geracoes; g++){
             (*populacao).geracao = g;
+            (*populacao_intermediaria).geracao = g;
 
             avaliacao.avaliacao();
+            // printf("### AVALIACAO: ###\n");
+            // (*populacao).print_populacao();
 
-            if((*p).elitismo and g > 0){
+            if((*p).elitismo){
                 elitismo();
             }
 
             if((g + 1) % (*p).intervalo_plot == 0){
-                printf("%d. ", g + 1);
                 atualizar_grafico_convergencia(g + 1);
                 avaliacao.print_melhor_individiduo();
             }
@@ -61,10 +63,15 @@ public:
                 escalonamento_linear(g);                
             }
 
-
             selecao.selecao();
-            crossover.crossover();
+            // printf("### SELECAO: ###\n");
+            // (*populacao_intermediaria).print_populacao();
+            // crossover.crossover();
+            // printf("### CROSSOVER: ###\n");
+            // (*populacao_intermediaria).print_populacao();
             mutacao.mutacao();
+            // printf("### MUTACAO: ###\n");
+            // (*populacao_intermediaria).print_populacao();
 
             if((*p).genereation_gap > 0.0){
                 generation_gap();
@@ -126,7 +133,7 @@ public:
 
     void atualizar_grafico_convergencia(int g){
         double melhor_fitness = ((*p).elitismo and g > 1) ? (*populacao).melhor_individuo.fitness : avaliacao.melhor_individuo.second;
-        // printf("gen: %d\tbest: %.5lf\tavg: %.5lf\tworst: %.5lf\n",g, melhor_fitness, avaliacao.fitness_medio, avaliacao.pior_individuo.second);
+        printf("gen: %d\tbest: %.10lf\tavg: %.5lf\tworst: %.5lf\n",g, melhor_fitness, avaliacao.fitness_medio, avaliacao.pior_individuo.second);
         (*a).grafico_convergencia[execucao_atual] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
         (*a).grafico_convergencia[(*p).numero_execucoes] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
     }

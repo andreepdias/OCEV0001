@@ -195,6 +195,7 @@ public:
 
             for(int j = 0; j < (*p).tamanho_cromossomo; j++)
             {
+                // printf("old: %.5lf %.5lf\n", (*c0)[j], (*c1)[j]);
                 double maior_i = max((*c0)[j], (*c1)[j]);
                 double menor_i = min((*c0)[j], (*c1)[j]);
                 double d = maior_i - menor_i;
@@ -209,6 +210,7 @@ public:
                 
                 (*c1)[j] = max((*p).limite_inferior, (*c1)[j]);
                 (*c1)[j] = min((*p).limite_superior, (*c1)[j]);
+                // printf("new: %.5lf %.5lf\n\n", (*c0)[j], (*c1)[j]);
             }
         }
     }

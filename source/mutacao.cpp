@@ -97,7 +97,7 @@ public:
         auto delta = [&](double y, double a, double b) {
             double t = (*populacao).geracao + 1;
             double T = (*p).numero_geracoes;
-            return y * (1.0 - pow(a, (1.0 - (double(t) / T) ) * b) );
+            return y * (1.0 - pow(a, (1.0 - ((pow(t, 1.0 / 2) / pow(T, 1.0 / 2))) ) * b) );
         };
 
         #pragma omp parallel for schedule(dynamic)
@@ -107,22 +107,20 @@ public:
 
             for(int j = 0; j < (*p).tamanho_cromossomo; j++){
 
-                int r = distribution_real(engine);
-                if(r <= (*p).probabilidade_crossover){
+                double r = distribution_real(engine);
+                if(r <= (*p).probabilidade_mutacao){
 
                     double a = distribution_real(engine);
                     double b = 5;
 
-                    int bit = distribution_int(engine);
+                    double bit = distribution_real(engine);
 
-                    if(bit == 1){
+                    if(bit >= 0.50){
                         (*c)[j] = (*c)[j] + delta((*p).limite_superior - (*c)[j], a, b);
                     }else{
                         (*c)[j] = (*c)[j] - delta((*c)[j] - (*p).limite_inferior, a, b);
                     }
-
                 }
-
             }
         }
     }
