@@ -367,6 +367,7 @@ public:
                 fitness += sin((*c)[i]) * pow(sin(((i + 1) * pow((*c)[i], 2)) / M_PI), 2 * 10);
             }
             (*populacao).individuos[x].fitness = fitness;
+            (*populacao).individuos[x].funcao_objetivo = fitness;
         }
     }
 
@@ -413,6 +414,8 @@ public:
             for(int i = 0; i < (*p).tamanho_cromossomo; i++){
                 r2 += x;
             }
+            
+            (*populacao).individuos[k].funcao_objetivo = f;
 
             double pr1 = 1.0, pr2 = 1.0;
             if(r1 <= 0.75){

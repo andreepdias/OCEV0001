@@ -45,4 +45,7 @@ using namespace std;
 #define INTEIRA 44
 #define MIKA 45
 
+#define STANDARD_CROWDING 51
+#define DETERMINISTIC_CROWDING 52
+
 #endif

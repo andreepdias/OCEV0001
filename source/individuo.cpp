@@ -225,6 +225,21 @@ public:
             (*d1)[i] = (*d2)[i];
         }
     }
+
+    void print_restricoes(){
+        switch((*p).problema){
+            case KEANES:
+                print_restricoes_keanes();
+                break;
+        }
+    }
+
+    void print_restricoes_keanes(){
+        vector<double> *d = (vector<double>*)dados_individuo;
+
+        printf("%.5lf\t%.5lf", (*d)[1], (*d)[2]);
+
+    }
     
 
 };

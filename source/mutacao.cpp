@@ -97,7 +97,7 @@ public:
         auto delta = [&](double y, double a, double b) {
             double t = (*populacao).geracao + 1;
             double T = (*p).numero_geracoes;
-            return y * (1.0 - pow(a, (1.0 - ((pow(t, 1.0 / 2) / pow(T, 1.0 / 2))) ) * b) );
+            return y * (1.0 - pow(a, (1.0 - ((pow(t, 1.0 / (*p).mutacao_mika) / pow(T, 1.0 / (*p).mutacao_mika))) ) * b) );
         };
 
         #pragma omp parallel for schedule(dynamic)

@@ -37,6 +37,11 @@ public:
 
     double genereation_gap = 0.0;
 
+    int tipo_crowding;
+    int standard_crowding_fc;
+
+    double mutacao_mika = 1.0;
+
     Parametros(){}
 
     string carregar_parametros(string arquivo){
@@ -194,7 +199,12 @@ public:
                     printf("\tInteira\n");
                 }else if(v == "MIKA"){
                     tipo_mutacao = 45;
-                    printf("\tMichalewicz\n");
+
+                    string x;
+                    arquivo_parametros >> x;
+                    mutacao_mika = stod(x);
+
+                    printf("\tMichalewicz %.2lf\n", mutacao_mika);
                 }else{
                     retorno += "Tipo de Mutacao nao encontrado\n";
                 }
@@ -252,10 +262,26 @@ public:
                 fix = stoi(v);
                 printf("Fix:\n");
                 printf("\t%d\n", fix);
-            }else if(k == "GENERATIO-GAP"){
+            }else if(k == "GENERATION-GAP"){
                 genereation_gap = stod(v);
                 printf("Generation Gap:\n");
                 printf("\t%.3lf\n", genereation_gap);
+            }else if(k == "CROWDING"){
+                if(v == "STANDARD"){
+                    tipo_crowding = 51;
+
+                    string x;
+                    arquivo_parametros >> x;
+
+                    standard_crowding_fc = stoi(x);
+
+                }else if(v == "DETERMINISTIC"){
+                    tipo_crowding = 52;
+                }else{
+                    tipo_crowding = 0;
+                }
+                printf("Crowding:\n");
+                printf("\t%d\n", tipo_crowding);
             }
         }
         return retorno;

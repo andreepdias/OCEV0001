@@ -4,10 +4,19 @@ using namespace std;
 
 int main(){
 
+	ofstream file;
 
-	for(int i = 1; i <= 5000; i++){
-		printf("%d. %.5lf\n", i, pow(i, 1.0 / 3) / pow(5000, 1.0 / 3));
-	}
+	file.open("saidas/grafico_convergencia");
+
+	file << "OI" << endl;
+
+	file.close();
+	file.open("saidas/grafico_convergencia", ios::trunc);
+
+	file << "Tchau" << endl;
+
+	file.close();
+
 
 }
 
