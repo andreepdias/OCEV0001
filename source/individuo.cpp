@@ -237,7 +237,7 @@ public:
     void print_restricoes_keanes(){
         vector<double> *d = (vector<double>*)dados_individuo;
 
-        printf("%.5lf\t%.5lf", (*d)[1], (*d)[2]);
+        printf("%.11lf\t%.11lf", (*d)[1], (*d)[2]);
 
     }
     

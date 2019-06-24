@@ -143,10 +143,25 @@ public:
     }
 
     void atualizar_grafico_convergencia(int g){
-        double melhor_fitness = ((*p).elitismo and g > 1) ? (*populacao).melhor_individuo.fitness : avaliacao.melhor_individuo.second;
+
+        double pior_fitenss = (*populacao).individuos[0].fitness;
+        double melhor_fitness = (*populacao).individuos[0].fitness;
+        double media_fitness = (*populacao).individuos[0].fitness;
+
+        for(int i = 1; i < (*p).tamanho_populacao; i++){
+            if((*populacao).individuos[i].fitness < pior_fitenss){
+                pior_fitenss = (*populacao).individuos[i].fitness;
+            }
+            if((*populacao).individuos[i].fitness > melhor_fitness){
+                melhor_fitness = (*populacao).individuos[i].fitness;
+            }
+            media_fitness += (*populacao).individuos[i].fitness;
+        }
+        media_fitness /= (*p).tamanho_populacao;
+
         // printf("gen: %d\tbest: %.10lf\tavg: %.5lf\tworst: %.5lf\n",g, melhor_fitness, avaliacao.fitness_medio, avaliacao.pior_individuo.second);
-        (*a).grafico_convergencia[execucao_atual] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
-        (*a).grafico_convergencia[(*p).numero_execucoes] << g << " " << melhor_fitness << " " << avaliacao.fitness_medio << " " << avaliacao.pior_individuo.second << endl;
+        (*a).grafico_convergencia[execucao_atual] << g << " " << melhor_fitness << " " << media_fitness << " " << pior_fitenss << endl;
+        (*a).grafico_convergencia[(*p).numero_execucoes] << g << " " << melhor_fitness << " " << media_fitness << " " << pior_fitenss << endl;
     }
 
     void generation_gap(){

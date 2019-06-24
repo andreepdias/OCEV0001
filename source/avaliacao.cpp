@@ -345,7 +345,7 @@ public:
     {
         vector<double> *d = (vector<double>*)(*populacao).melhor_individuo.dados_individuo;
 
-        printf("fitness: %.5lf   f: %.5lf    r1: %.5lf(%lf)    r2: %.5lf(%.5lf)\n", 
+        printf("fitness: %.5lf   f: %.10lf    r1: %.10lf(%lf)    r2: %.10lf(%.5lf)\n", 
                 (*populacao).melhor_individuo.fitness, 
                 (*d)[0], 
                 (*d)[1], 
@@ -378,6 +378,8 @@ public:
 
             vector<double> *cromossomo = (vector<double>*)(*populacao).individuos[k].cromossomo;
             vector<double> *dados_individuo = (vector<double>*)(*populacao).individuos[k].dados_individuo;
+
+            sort((*cromossomo).begin(), (*cromossomo).end(), [](double &a, double &b){return a > b;});
 
             double a = 0.0, b = 1.0, c = 0.0, x;
 
@@ -429,6 +431,8 @@ public:
                 pr2 = (1.0 - ((r2 - m) / (max - m)));
                 f = f * pr2;
             }
+
+            // f = (0.5) * f + (0.25) * pr1 + (0.25) * pr2;
 
             (*populacao).individuos[k].fitness = f;
             

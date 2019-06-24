@@ -1,7 +1,7 @@
 set xlabel "Generation" font "Helvetica, 12"
 set ylabel "Fitness" font "Helvetica, 12"
 set title "Michalewicz" font "Helvetica, 15"
-set xrange [1:5000]
+set xrange [1:10000]
 set autoscale y
 set grid
 set xtics 1000

@@ -97,7 +97,14 @@ public:
         auto delta = [&](double y, double a, double b) {
             double t = (*populacao).geracao + 1;
             double T = (*p).numero_geracoes;
-            return y * (1.0 - pow(a, (1.0 - ((pow(t, 1.0 / (*p).mutacao_mika) / pow(T, 1.0 / (*p).mutacao_mika))) ) * b) );
+
+            // double delta = y * (1.0 - std::pow(a, std::pow(1.0 - geracao_atual / (double)config.getGenerations(), config.getB())));
+
+            //  return y * (1.0 - pow(a, (1.0 - ((pow(t, 1.0 / (*p).mutacao_mika) / pow(T, 1.0 / (*p).mutacao_mika))) ) * b) ); 
+            //return y * (1.0 - pow(a, pow(1.0 - pow(t, 1.0 / (*p).mutacao_mika) / pow(T, 1.0 / (*p).mutacao_mika), b     ) ) ); // bruno
+
+            return y * (1.0 - pow(a, pow((1.0 - pow(t, 1.0 / (*p).mutacao_mika) / pow(T, 1.0 / (*p).mutacao_mika)), b)));
+
         };
 
         #pragma omp parallel for schedule(dynamic)

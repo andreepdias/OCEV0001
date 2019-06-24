@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
 
         Individuo melhor_geracao = ga.melhor_individuo;
         melhores_individuos.push_back(melhor_geracao);
-        printf("\nExecucao %d:\tFuncao Objetivo: %.5lf\t", k, melhor_geracao.funcao_objetivo);
+        printf("\nExecucao %d:\tFuncao Objetivo: %.5lf\t", k + 1, melhor_geracao.funcao_objetivo);
         melhor_geracao.print_restricoes();
 
         melhor_individuo = (melhor_geracao.fitness > melhor_individuo.fitness) ? melhor_geracao : melhor_individuo;
